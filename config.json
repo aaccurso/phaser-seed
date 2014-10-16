@@ -1,5 +1,5 @@
 {
   "projectName": "FlappyBird",
-  "gameWidth": "1024",
-  "gameHeight": "600"
+  "gameWidth": "window.innerWidth",
+  "gameHeight": "window.innerHeight"
 }

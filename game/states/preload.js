@@ -16,6 +16,7 @@ Preload.prototype = {
 
   },
   create: function() {
+    this.game.add.sprite(0,0,'');
     this.asset.cropEnabled = false;
   },
   update: function() {
