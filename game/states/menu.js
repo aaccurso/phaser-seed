@@ -40,11 +40,11 @@ Menu.prototype = {
     /** STEP 5 **/
     // Set the originating location of the group
     this.titleGroup.x = 30;
-    this.titleGroup.y = 0;
+    this.titleGroup.y = 100;
 
     /** STEP 6 **/
     // create an oscillating animation tween for the group
-    this.game.add.tween(this.titleGroup).to({y:15}, 350, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
+    this.game.add.tween(this.titleGroup).to({y:115}, 350, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
   },
   update: function() {
   }
