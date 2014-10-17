@@ -18,6 +18,9 @@
       // and add it to the game
       this.game.add.existing(this.bird);
 
+      // create and add a group to hold our pipeGroup prefabs
+      this.pipes = this.game.add.group();
+
       // create and add a new Ground object
       this.ground = new Ground(this.game, 0, 400, 335, 112);
       this.game.add.existing(this.ground);
@@ -30,9 +33,12 @@
       this.pipeGenerator.timer.start();
     },
     generatePipes: function() {
-      var pipeGroup = new PipeGroup(this.game);
-      pipeGroup.x = this.game.width;
-      pipeGroup.y = this.game.rnd.integerInRange(-100, 100);
+      var pipeY = this.game.rnd.integerInRange(-100, 100);
+      var pipeGroup = this.pipes.getFirstExists(false);
+      if(!pipeGroup) {
+          pipeGroup = new PipeGroup(this.game, this.pipes);
+      }
+      pipeGroup.reset(this.game.width + pipeGroup.width/2, pipeY);
     },
     update: function() {
       this.game.physics.arcade.collide(this.bird, this.ground);
