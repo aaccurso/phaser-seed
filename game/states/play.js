@@ -3,7 +3,6 @@
   function Play() {}
   Play.prototype = {
     create: function() {
-      this.game.add.sprite(0,0,'');
       this.game.physics.startSystem(Phaser.Physics.ARCADE);
       this.sprite = this.game.add.sprite(this.game.width/2, this.game.height/2, 'yeoman');
       this.sprite.inputEnabled = true;

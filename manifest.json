@@ -1,0 +1,13 @@
+{
+  "name": "FlappyBird",
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    }
+  ]
+}

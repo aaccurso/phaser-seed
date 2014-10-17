@@ -4,27 +4,49 @@ function Menu() {}
 
 Menu.prototype = {
   preload: function() {
-
   },
   create: function() {
-    var style = { font: '65px Arial', fill: '#ffffff', align: 'center'};
-    this.game.add.sprite(0,0,'');
-    this.sprite = this.game.add.sprite(this.game.world.centerX, 138, 'yeoman');
-    this.sprite.anchor.setTo(0.5, 0.5);
+    // add the background sprite
+    this.background = this.game.add.sprite(0, 0, 'background');
 
-    this.titleText = this.game.add.text(this.game.world.centerX, 300, '\'Allo, \'Allo!', style);
-    this.titleText.anchor.setTo(0.5, 0.5);
+    // add the ground sprite as a tile
+    // and start scrolling in the negative x direction
+    this.ground = this.game.add.tileSprite(0, 400, 335, 112, 'ground');
+    this.ground.autoScroll(-200, 0);
 
-    this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click anywhere to play "Click The Yeoman Logo"', { font: '16px Arial', fill: '#ffffff', align: 'center'});
-    this.instructionsText.anchor.setTo(0.5, 0.5);
+    /** STEP 1 **/
+    // create a group to put the title assets in
+    // so they can be manipulated as a whole
+    this.titleGroup = this.game.add.group();
 
-    this.sprite.angle = -20;
-    this.game.add.tween(this.sprite).to({angle: 20}, 1000, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
+    /** STEP 2 **/
+    // create the title sprite
+    // and add it to the group
+    this.title = this.game.add.sprite(0, 0, 'title');
+    this.titleGroup.add(this.title);
+
+    /** STEP 3 **/
+    // create the bird sprite
+    // and add it to the title group
+    this.bird = this.game.add.sprite(200, 5, 'bird');
+    this.titleGroup.add(this.bird);
+
+    /** STEP 4 **/
+    // add an animation to the bird
+    // and begin the animation
+    this.bird.animations.add('flap');
+    this.bird.animations.play('flap', 12, true);
+
+    /** STEP 5 **/
+    // Set the originating location of the group
+    this.titleGroup.x = 30;
+    this.titleGroup.y = 0;
+
+    /** STEP 6 **/
+    // create an oscillating animation tween for the group
+    this.game.add.tween(this.titleGroup).to({y:15}, 350, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
   },
   update: function() {
-    if(this.game.input.activePointer.justPressed()) {
-      this.game.state.start('play');
-    }
   }
 };
 

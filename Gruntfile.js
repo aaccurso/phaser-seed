@@ -22,7 +22,9 @@ module.exports = function (grunt) {
       scripts: {
         files: [
             'game/**/*.js',
-            '!game/main.js'
+            '!game/main.js',
+            'config.json',
+            'css/**/*.css'
         ],
         options: {
           spawn: false,
@@ -61,6 +63,7 @@ module.exports = function (grunt) {
           { expand: true, flatten: true, src: ['game/plugins/*.js'], dest: 'dist/' },
           { expand: true, flatten: true, src: ['bower_components/**/build/*.js'], dest: 'dist/' },
           { expand: true, flatten: true, src: ['css/**'], dest: 'dist/' },
+          { expand: true, src: ['manifest.json'], dest: 'dist/' },
           { expand: true, src: ['index.html'], dest: 'dist/' }
         ]
       }
