@@ -41,7 +41,20 @@
       pipeGroup.reset(this.game.width + pipeGroup.width/2, pipeY);
     },
     update: function() {
-      this.game.physics.arcade.collide(this.bird, this.ground);
+      // enable collisions between the bird and the ground
+      this.game.physics.arcade.collide(this.bird, this.ground, this.deathHandler, null, this);
+
+      // enable collisions between the bird and each group in the pipes group
+      this.pipes.forEach(function(pipeGroup) {
+        this.game.physics.arcade.collide(this.bird, pipeGroup, this.deathHandler, null, this);
+      }, this);
+    },
+    deathHandler: function() {
+      this.game.state.start('gameover');
+    },
+    shutdown: function() {
+      this.bird.destroy();
+      this.pipes.destroy();
     }
   };
 
