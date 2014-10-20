@@ -47,7 +47,7 @@
       var pipeY = this.game.rnd.integerInRange(-100, 100);
       var pipeGroup = this.pipes.getFirstExists(false);
       if(!pipeGroup) {
-          pipeGroup = new PipeGroup(this.game, this.pipes);
+        pipeGroup = new PipeGroup(this.game, this.pipes);
       }
       pipeGroup.reset(this.game.width + pipeGroup.width/2, pipeY);
     },
@@ -80,6 +80,7 @@
       }
     },
     deathHandler: function() {
+      if (!this.bird.alive) return;
       this.bird.alive = false;
       this.pipes.callAll('stop');
       this.pipeGenerator.timer.stop();
@@ -89,7 +90,6 @@
       this.scoreboard.show(this.score);
     },
     shutdown: function() {
-      this.game.input.keyboard.removeKey(Phaser.Keyboard.SPACEBAR);
       this.bird.destroy();
       this.pipes.destroy();
       this.scoreboard.destroy();
