@@ -80,8 +80,14 @@ module.exports = function (grunt) {
       options: {
         stderr: false
       },
-      target: {
+      buildAndroid: {
         command: ['./build_android.sh', manifest.package, manifest.name].join(' ')
+      },
+      installAndroidx86: {
+        command: ['adb install -r build/', manifest.name, '_x86.apk'].join('')
+      },
+      installAndroidarm: {
+        command: ['adb install -r build/', manifest.name, '_arm.apk'].join('')
       }
     }
   });
@@ -90,7 +96,13 @@ module.exports = function (grunt) {
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
   grunt.registerTask('prod', ['build', 'copy']);
-  grunt.registerTask('buildAndroid', ['shell']);
+  grunt.registerTask('buildAndroid', ['shell:buildAndroid']);
+  grunt.registerTask('installAndroid', function (arch) {
+    // arch is x86 (Intel based tablets) or arm (Smartphones)
+    grunt.task.run([
+      'shell:installAndroid' + arch
+    ]);
+  });
 
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');
