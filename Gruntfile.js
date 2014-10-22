@@ -1,6 +1,7 @@
 // Generated on 2014-03-28 using generator-phaser-official 0.0.8-rc-2
 'use strict';
 var config = require('./config.json');
+var manifest = require('./manifest.json');
 var _ = require('underscore');
 _.str = require('underscore.string');
 
@@ -74,13 +75,22 @@ module.exports = function (grunt) {
         src: ['game/main.js'],
         dest: 'dist/game.js'
       }
+    },
+    shell: {
+      options: {
+        stderr: false
+      },
+      target: {
+        command: ['./build_android.sh', manifest.package, manifest.name].join(' ')
+      }
     }
   });
 
-  grunt.registerTask('build', ['buildBootstrapper', 'browserify','copy']);
+  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
   grunt.registerTask('prod', ['build', 'copy']);
+  grunt.registerTask('buildAndroid', ['shell']);
 
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');

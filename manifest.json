@@ -1,5 +1,6 @@
 {
   "name": "FlappyBird",
+  "package": "io.aaccurso.flappybird",
   "start_url": "index.html",
   "display": "fullscreen",
   "orientation": "portrait",
