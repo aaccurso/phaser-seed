@@ -1,7 +1,6 @@
 // Generated on 2014-03-28 using generator-phaser-official 0.0.8-rc-2
 'use strict';
 var config = require('./config.json');
-var manifest = require('./manifest.json');
 var _ = require('underscore');
 _.str = require('underscore.string');
 
@@ -19,6 +18,7 @@ module.exports = function (grunt) {
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
   grunt.initConfig({
+    manifest: grunt.file.readJSON('manifest.json'),
     watch: {
       scripts: {
         files: [
@@ -81,13 +81,28 @@ module.exports = function (grunt) {
         stderr: false
       },
       buildAndroid: {
-        command: ['./build_android.sh', manifest.package, manifest.name].join(' ')
+        command: "./build_android.sh <%= manifest.package %> <%= manifest.name %>"
       },
       installAndroidx86: {
-        command: ['adb install -r build/', manifest.name, '_x86.apk'].join('')
+        command: "adb install -r build/<%= manifest.name %>_x86.apk"
       },
       installAndroidarm: {
-        command: ['adb install -r build/', manifest.name, '_arm.apk'].join('')
+        command: "adb install -r build/<%= manifest.name %>_arm.apk"
+      }
+    },
+    bump: {
+      options: {
+        files: ['package.json', 'bower.json', 'manifest.json'],
+        updateConfigs: [],
+        commit: true,
+        commitMessage: 'Release %VERSION%',
+        commitFiles: ['package.json', 'bower.json', 'manifest.json'],
+        createTag: true,
+        tagName: '%VERSION%',
+        tagMessage: 'Version %VERSION%',
+        push: false,
+        pushTo: 'upstream',
+        gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d'
       }
     }
   });

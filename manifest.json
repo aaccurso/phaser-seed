@@ -1,5 +1,6 @@
 {
   "name": "FlappyBird",
+  "version": "0.0.1",
   "package": "io.aaccurso.flappybird",
   "start_url": "index.html",
   "display": "fullscreen",
