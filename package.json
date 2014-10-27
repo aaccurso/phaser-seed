@@ -1,5 +1,6 @@
 {
   "name": "flappybird",
+  "version": "0.0.1",
   "private": true,
   "devDependencies": {
     "bower": "~0.9.2",
