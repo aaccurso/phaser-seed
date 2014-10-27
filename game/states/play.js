@@ -80,7 +80,9 @@
       }
     },
     deathHandler: function() {
-      if (!this.bird.alive) return;
+      if (!this.bird.alive) {
+        return;
+      }
       this.bird.alive = false;
       this.pipes.callAll('stop');
       this.pipeGenerator.timer.stop();

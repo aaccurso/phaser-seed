@@ -104,6 +104,13 @@ module.exports = function (grunt) {
         pushTo: 'upstream',
         gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d'
       }
+    },
+    jshint: {
+      all: ['game/**/*.js'],
+      options: {
+        jshintrc: '.jshintrc',
+        reporter: require('jshint-stylish')
+      }
     }
   });
 
