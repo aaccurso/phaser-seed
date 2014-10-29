@@ -111,6 +111,12 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc',
         reporter: require('jshint-stylish')
       }
+    },
+    githooks: {
+      all: {
+        // Will run the jshint and test:unit tasks at every commit
+        'pre-commit': 'jshint',
+      }
     }
   });
 
