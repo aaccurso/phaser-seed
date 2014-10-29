@@ -16,6 +16,7 @@ var Bird = function(game, x, y, frame) {
   // until the game is started
   this.game.physics.arcade.enableBody(this);
   this.body.allowGravity = false;
+  this.body.collideWorldBounds = true;
   this.alive = false;
 
   this.flapSound = this.game.add.audio('flap');

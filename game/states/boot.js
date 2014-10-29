@@ -1,6 +1,8 @@
 
 'use strict';
 
+require('named-args');
+
 function Boot() {
 }
 
@@ -11,7 +13,7 @@ Boot.prototype = {
     this.game.scale.setScreenSize();
     this.game.scale.refresh();
     this.game.scale.forcePortrait = true;
-    
+
     this.load.image('preloader', 'preloader.gif');
   },
   create: function() {
