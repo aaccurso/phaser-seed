@@ -14,7 +14,7 @@ Boot.prototype = {
     this.game.scale.refresh();
     this.game.scale.forcePortrait = true;
 
-    this.load.image('preloader', 'preloader.gif');
+    this.load.image('preloader', 'assets/preloader.gif');
   },
   create: function() {
     this.game.input.maxPointers = 1;
