@@ -106,7 +106,7 @@ module.exports = function (grunt) {
       }
     },
     jshint: {
-      all: ['game/**/*.js'],
+      all: ['game/**/*.js', 'Gruntfile.js'],
       options: {
         jshintrc: '.jshintrc',
         reporter: require('jshint-stylish')
