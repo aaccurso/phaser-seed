@@ -120,7 +120,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy']);
+  grunt.registerTask('build', ['githooks', 'buildBootstrapper', 'browserify', 'copy']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
   grunt.registerTask('prod', ['build', 'copy']);
