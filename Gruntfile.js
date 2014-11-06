@@ -24,6 +24,7 @@ module.exports = function (grunt) {
         files: [
             'game/**/*.js',
             '!game/main.js',
+            'templates/*.js.tpl',
             'config.json',
             'css/**/*.css'
         ],
