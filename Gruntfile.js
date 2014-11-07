@@ -89,6 +89,13 @@ module.exports = function (grunt) {
       },
       installAndroidarm: {
         command: "adb install -r build/<%= manifest.name %>_arm.apk"
+      },
+      restartAdb: {
+        command: [
+          'sudo $(which adb) kill-server',
+          'sudo $(which adb) start-server',
+          'adb devices'
+        ].join('&&')
       }
     },
     bump: {
@@ -126,6 +133,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['serve']);
   grunt.registerTask('prod', ['build', 'copy']);
   grunt.registerTask('buildAndroid', ['shell:buildAndroid']);
+  grunt.registerTask('restartAdb', ['shell:restartAdb']);
   grunt.registerTask('installAndroid', function (arch) {
     // arch is x86 (Intel based tablets) or arm (Smartphones)
     grunt.task.run([
