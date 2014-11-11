@@ -82,7 +82,7 @@ module.exports = function (grunt) {
         stderr: false
       },
       buildAndroid: {
-        command: "./build_android.sh <%= manifest.package %> <%= manifest.name %>"
+        command: "./build_android.sh <%= manifest.package %> <%= manifest.name %> <%= manifest.version %>"
       },
       installAndroidx86: {
         command: "adb install -r build/<%= manifest.name %>_x86.apk"
