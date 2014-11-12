@@ -66,6 +66,7 @@ module.exports = function (grunt) {
           { expand: true, src: ['css/**'], dest: 'dist/' },
           { expand: true, flatten: true, src: ['game/plugins/*.js'], dest: 'dist/' },
           { expand: true, flatten: true, src: ['bower_components/**/build/*.js'], dest: 'dist/' },
+          { expand: true, src: ['icon.png'], dest: 'dist/' },
           { expand: true, src: ['manifest.json'], dest: 'dist/' },
           { expand: true, src: ['index.html'], dest: 'dist/' }
         ]
@@ -132,7 +133,7 @@ module.exports = function (grunt) {
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
   grunt.registerTask('prod', ['build', 'copy']);
-  grunt.registerTask('buildAndroid', ['shell:buildAndroid']);
+  grunt.registerTask('buildAndroid', ['build', 'shell:buildAndroid']);
   grunt.registerTask('restartAdb', ['shell:restartAdb']);
   grunt.registerTask('installAndroid', function (arch) {
     // arch is x86 (Intel based tablets) or arm (Smartphones)
