@@ -22,11 +22,11 @@ module.exports = function (grunt) {
     watch: {
       scripts: {
         files: [
-            'game/**/*.js',
-            '!game/main.js',
-            'templates/*.js.tpl',
-            'config.json',
-            'css/**/*.css'
+          'game/**/*.js',
+          '!game/main.js',
+          'templates/*.js.tpl',
+          'config.json',
+          'css/**/*.css'
         ],
         options: {
           spawn: false,
@@ -119,6 +119,15 @@ module.exports = function (grunt) {
       options: {
         jshintrc: '.jshintrc',
         reporter: require('jshint-stylish')
+      }
+    },
+    jscs: {
+      src: [
+        'game/**/*.js',
+        '!game/main.js'
+      ],
+      options: {
+        config: '.jscsrc'
       }
     },
     githooks: {
