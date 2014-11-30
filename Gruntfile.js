@@ -126,14 +126,17 @@ module.exports = function (grunt) {
         // Will run the jshint and test:unit tasks at every commit
         'pre-commit': 'jshint',
       }
-    }
+    },
+    clean: {
+      serve: ['dist'],
+      build: ['dist', 'build'],
+    },
   });
 
-  grunt.registerTask('build', ['githooks', 'buildBootstrapper', 'browserify', 'copy']);
-  grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
-  grunt.registerTask('default', ['serve']);
-  grunt.registerTask('prod', ['build', 'copy']);
-  grunt.registerTask('buildAndroid', ['build', 'shell:buildAndroid']);
+  grunt.registerTask('default', 'serve');
+  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy']);
+  grunt.registerTask('serve', ['githooks', 'clean:serve', 'build', 'connect:livereload', 'open', 'watch']);
+  grunt.registerTask('buildAndroid', ['clean:build', 'build', 'shell:buildAndroid']);
   grunt.registerTask('restartAdb', ['shell:restartAdb']);
   grunt.registerTask('installAndroid', function (arch) {
     // arch is x86 (Intel based tablets) or arm (Smartphones)
@@ -141,7 +144,6 @@ module.exports = function (grunt) {
       'shell:installAndroid' + arch
     ]);
   });
-
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');
     var gameStates = [];
