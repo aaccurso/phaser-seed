@@ -1,7 +1,7 @@
 'use strict';
 
 window.onload = function () {
-  var game = new Phaser.Game(288, 505, Phaser.AUTO, 'flappybird');
+  var game = new Phaser.Game(288, 505, Phaser.AUTO, 'game');
   
   game.state.add('boot', require('./states/boot'));
   game.state.add('menu', require('./states/menu'));
