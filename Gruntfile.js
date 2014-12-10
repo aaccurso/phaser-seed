@@ -153,19 +153,17 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', 'serve');
-  grunt.registerTask('build', function(env) {
-    grunt.task.run(['buildBootstrapper', 'copy:' + env || 'dev', 'browserify', 'copy:dist']);
-  });
+  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:dist']);
   grunt.registerTask('serve', function(env) {
-    grunt.task.run(['githooks', 'clean:serve', 'build:' + env || 'dev', 'connect:livereload', 'open', 'watch']);
+    grunt.task.run(['githooks', 'clean:serve', 'copy:' + (env || 'dev'), 'build', 'connect:livereload', 'open', 'watch']);
   });
   grunt.registerTask('buildAndroid', function(env) {
-    grunt.task.run(['clean:build', 'build:' + env || 'prod', 'shell:buildAndroid']);
+    grunt.task.run(['clean:build', 'copy:' + (env || 'prod'), 'build', 'shell:buildAndroid']);
   });
   grunt.registerTask('restartAdb', ['shell:restartAdb']);
   grunt.registerTask('installAndroid', function(arch) {
     // arch is x86 (Intel based tablets) or arm (non-Intel)
-    grunt.task.run(['shell:installAndroid' + arch || 'arm']);
+    grunt.task.run(['shell:installAndroid' + (arch || 'arm')]);
   });
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');
