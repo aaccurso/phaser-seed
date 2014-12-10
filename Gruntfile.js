@@ -134,7 +134,8 @@ module.exports = function (grunt) {
     jscs: {
       src: [
         'game/**/*.js',
-        '!game/main.js'
+        '!game/main.js',
+        '!game/plugins/*'
       ],
       options: {
         config: '.jscsrc'
