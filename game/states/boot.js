@@ -1,12 +1,15 @@
-
 'use strict';
 
 require('named-args');
 
-function Boot() {
-}
+function Boot() {}
 
 Boot.prototype = {
+  init: function() {
+    this.game.global = {
+      CONFIG: require('../config.json')
+    };
+  },
   preload: function() {
     // Scale and orientation
     this.game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
