@@ -138,7 +138,8 @@ module.exports = function (grunt) {
         '!game/plugins/*'
       ],
       options: {
-        config: '.jscsrc'
+        config: '.jscsrc',
+        reporter: require('jscs-stylish').path
       }
     },
     githooks: {
