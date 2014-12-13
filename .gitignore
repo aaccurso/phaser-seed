@@ -3,3 +3,4 @@ bower_components
 dist
 build
 *.log
+game/config.json

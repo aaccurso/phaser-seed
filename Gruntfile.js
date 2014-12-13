@@ -22,11 +22,11 @@ module.exports = function (grunt) {
     watch: {
       scripts: {
         files: [
-            'game/**/*.js',
-            '!game/main.js',
-            'templates/*.js.tpl',
-            'config.json',
-            'css/**/*.css'
+          'game/**/*.js',
+          '!game/main.js',
+          'templates/*.js.tpl',
+          'config.json',
+          'css/**/*.css'
         ],
         options: {
           spawn: false,
@@ -66,8 +66,19 @@ module.exports = function (grunt) {
           { expand: true, src: ['css/**'], dest: 'dist/' },
           { expand: true, flatten: true, src: ['game/plugins/*.js'], dest: 'dist/' },
           { expand: true, flatten: true, src: ['bower_components/**/build/*.js'], dest: 'dist/' },
+          { expand: true, src: ['icon.png'], dest: 'dist/' },
           { expand: true, src: ['manifest.json'], dest: 'dist/' },
           { expand: true, src: ['index.html'], dest: 'dist/' }
+        ]
+      },
+      dev: {
+        files: [
+          { src: 'game/config/config.dev.json', dest: 'game/config.json' }
+        ]
+      },
+      prod: {
+        files: [
+          { src: 'game/config/config.prod.json', dest: 'game/config.json' }
         ]
       }
     },
@@ -85,10 +96,10 @@ module.exports = function (grunt) {
         command: "./build_android.sh <%= manifest.package %> <%= manifest.name %> <%= manifest.version %>"
       },
       installAndroidx86: {
-        command: "adb install -r build/<%= manifest.name %>_x86.apk"
+        command: "adb install -r build/<%= manifest.name %>_<%= manifest.version %>_x86.apk"
       },
       installAndroidarm: {
-        command: "adb install -r build/<%= manifest.name %>_arm.apk"
+        command: "adb install -r build/<%= manifest.name %>_<%= manifest.version %>_arm.apk"
       },
       restartAdb: {
         command: [
@@ -120,27 +131,40 @@ module.exports = function (grunt) {
         reporter: require('jshint-stylish')
       }
     },
+    jscs: {
+      src: [
+        'game/**/*.js',
+        '!game/main.js'
+      ],
+      options: {
+        config: '.jscsrc'
+      }
+    },
     githooks: {
       all: {
         // Will run the jshint and test:unit tasks at every commit
-        'pre-commit': 'jshint',
+        'pre-commit': 'jshint jscs',
       }
-    }
+    },
+    clean: {
+      serve: ['dist'],
+      build: ['dist', 'build'],
+    },
   });
 
-  grunt.registerTask('build', ['githooks', 'buildBootstrapper', 'browserify', 'copy']);
-  grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
-  grunt.registerTask('default', ['serve']);
-  grunt.registerTask('prod', ['build', 'copy']);
-  grunt.registerTask('buildAndroid', ['shell:buildAndroid']);
+  grunt.registerTask('default', 'serve');
+  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:dist']);
+  grunt.registerTask('serve', function(env) {
+    grunt.task.run(['githooks', 'clean:serve', 'copy:' + (env || 'dev'), 'build', 'connect:livereload', 'open', 'watch']);
+  });
+  grunt.registerTask('buildAndroid', function(env) {
+    grunt.task.run(['clean:build', 'copy:' + (env || 'prod'), 'build', 'shell:buildAndroid']);
+  });
   grunt.registerTask('restartAdb', ['shell:restartAdb']);
-  grunt.registerTask('installAndroid', function (arch) {
-    // arch is x86 (Intel based tablets) or arm (Smartphones)
-    grunt.task.run([
-      'shell:installAndroid' + arch
-    ]);
+  grunt.registerTask('installAndroid', function(arch) {
+    // arch is x86 (Intel based tablets) or arm (non-Intel)
+    grunt.task.run(['shell:installAndroid' + (arch || 'arm')]);
   });
-
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');
     var gameStates = [];
