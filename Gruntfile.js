@@ -149,27 +149,35 @@ module.exports = function (grunt) {
     githooks: {
       all: {
         // Will run the jshint and test:unit tasks at every commit
-        'pre-commit': 'jshint jscs',
+        'pre-commit': 'checkStyle',
       }
     },
     clean: {
       serve: ['dist'],
       build: ['dist', 'build'],
     },
+    'notify_hooks': {
+      options: {
+        enabled: true,
+        'max_jshint_notifications': 5, // maximum number of notifications from jshint output
+        success: true, // whether successful grunt executions should be notified automatically
+        duration: 3 // the duration of notification in seconds, for `notify-send only
+      }
+    },
   });
 
   grunt.registerTask('default', 'serve');
-  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:dist']);
+  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:dist', 'notify_hooks']);
   grunt.registerTask('serve', function(env) {
     grunt.task.run(['githooks', 'clean:serve', 'copy:' + (env || 'dev'), 'build', 'connect:livereload', 'open', 'watch']);
   });
   grunt.registerTask('buildAndroid', function(env) {
-    grunt.task.run(['clean:build', 'copy:' + (env || 'prod'), 'build', 'shell:buildAndroid']);
+    grunt.task.run(['clean:build', 'copy:' + (env || 'prod'), 'build', 'shell:buildAndroid', 'notify_hooks']);
   });
   grunt.registerTask('restartAdb', ['shell:restartAdb']);
   grunt.registerTask('installAndroid', function(arch) {
     // arch is x86 (Intel based tablets) or arm (non-Intel)
-    grunt.task.run(['shell:installAndroid' + (arch || 'arm')]);
+    grunt.task.run(['shell:installAndroid' + (arch || 'arm'), 'notify_hooks']);
   });
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');
@@ -187,4 +195,5 @@ module.exports = function (grunt) {
     bootstrapper = grunt.template.process(bootstrapper,{data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
+  grunt.registerTask('checkStyle', ['jshint', 'notify_hooks', 'jscs', 'notify_hooks']);
 };
