@@ -26,7 +26,8 @@ module.exports = function (grunt) {
           '!game/main.js',
           'templates/*.js.tpl',
           'config.json',
-          'css/**/*.css'
+          'css/**/*.css',
+          'index.html'
         ],
         options: {
           spawn: false,
@@ -64,8 +65,11 @@ module.exports = function (grunt) {
           { expand: true, src: ['assets/**'], dest: 'dist/' },
           { expand: true, src: ['fonts/**'], dest: 'dist/' },
           { expand: true, src: ['css/**'], dest: 'dist/' },
-          { expand: true, flatten: true, src: ['game/plugins/*.js'], dest: 'dist/' },
-          { expand: true, flatten: true, src: ['bower_components/**/build/*.js'], dest: 'dist/' },
+          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'dist/' },
+          { expand: true, flatten: true, src: [
+              'bower_components/*/build/*.js',
+              'bower_components/*/dist/*.js'
+            ], dest: 'dist/' },
           { expand: true, src: ['icon.png'], dest: 'dist/' },
           { expand: true, src: ['manifest.json'], dest: 'dist/' },
           { expand: true, src: ['index.html'], dest: 'dist/' }
@@ -116,7 +120,7 @@ module.exports = function (grunt) {
         commit: true,
         commitMessage: 'Release %VERSION%',
         commitFiles: ['package.json', 'bower.json', 'manifest.json'],
-        createTag: true,
+        createTag: false,
         tagName: '%VERSION%',
         tagMessage: 'Version %VERSION%',
         push: false,
