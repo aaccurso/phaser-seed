@@ -47,7 +47,7 @@ module.exports = function (grunt) {
           middleware: function (connect) {
             return [
               lrSnippet,
-              mountFolder(connect, 'dist')
+              mountFolder(connect, 'serve')
             ];
           }
         }
@@ -67,10 +67,10 @@ module.exports = function (grunt) {
           { expand: true, src: ['css/**'], dest: 'serve/' },
           { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'serve/' },
           { expand: true, flatten: true, src: [
-              'bower_components/*/build/*.js',
-              'bower_components/*/dist/*.js'
+              'bower_components/*/build/*{.js,.map}',
+              'bower_components/*/dist/*{.js,.map}'
             ], dest: 'serve/' },
-          { expand: true, src: ['index.html'], dest: 'serve/' }
+          { src: 'index.html', dest: 'serve/index.html' }
         ]
       },
       dist: {
@@ -81,12 +81,12 @@ module.exports = function (grunt) {
           { expand: true, src: ['css/**'], dest: 'dist/' },
           { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'dist/' },
           { expand: true, flatten: true, src: [
-              'bower_components/*/build/*.js',
-              'bower_components/*/dist/*.js'
+              'bower_components/*/build/*{.js,.map}',
+              'bower_components/*/dist/*{.js,.map}'
             ], dest: 'dist/' },
           { expand: true, src: ['icon.png'], dest: 'dist/' },
           { expand: true, src: ['manifest.json'], dest: 'dist/' },
-          { expand: true, src: ['index.html'], dest: 'dist/' }
+          { src: 'index.dist.html', dest: 'dist/index.html' }
         ]
       },
       dev: {
@@ -107,8 +107,16 @@ module.exports = function (grunt) {
       },
       dist: {
         src: ['game/main.js'],
-        dest: 'dist/game.js'
+        dest: '.cache/game.js'
       }
+    },
+    uglify: {
+      dist: {
+        files: {
+          'dist/game.min.js': ['.cache/game.js']
+        }
+      },
+      serve: {}
     },
     clean: {
       serve: ['serve'],
@@ -189,6 +197,7 @@ module.exports = function (grunt) {
     grunt.task.run([
       'buildBootstrapper',
       'browserify:' + (dest || 'dist'),
+      'uglify:' + (dest || 'dist'),
       'copy:' + (dest || 'dist'),
       'notify_hooks'
     ]);
