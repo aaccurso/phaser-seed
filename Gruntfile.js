@@ -33,7 +33,7 @@ module.exports = function (grunt) {
           spawn: false,
           livereload: LIVERELOAD_PORT
         },
-        tasks: ['build']
+        tasks: ['build:serve']
       }
     },
     connect: {
@@ -59,6 +59,20 @@ module.exports = function (grunt) {
       }
     },
     copy: {
+      serve: {
+        files: [
+          // includes files within path and its sub-directories
+          { expand: true, src: ['assets/**'], dest: 'serve/' },
+          { expand: true, src: ['fonts/**'], dest: 'serve/' },
+          { expand: true, src: ['css/**'], dest: 'serve/' },
+          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'serve/' },
+          { expand: true, flatten: true, src: [
+              'bower_components/*/build/*.js',
+              'bower_components/*/dist/*.js'
+            ], dest: 'serve/' },
+          { expand: true, src: ['index.html'], dest: 'serve/' }
+        ]
+      },
       dist: {
         files: [
           // includes files within path and its sub-directories
@@ -87,10 +101,18 @@ module.exports = function (grunt) {
       }
     },
     browserify: {
-      build: {
+      serve: {
+        src: ['game/main.js'],
+        dest: 'serve/game.js'
+      },
+      dist: {
         src: ['game/main.js'],
         dest: 'dist/game.js'
       }
+    },
+    clean: {
+      serve: ['serve'],
+      dist: ['dist', 'build'],
     },
     shell: {
       options: {
@@ -152,10 +174,6 @@ module.exports = function (grunt) {
         'pre-commit': 'checkStyle',
       }
     },
-    clean: {
-      serve: ['dist'],
-      build: ['dist', 'build'],
-    },
     'notify_hooks': {
       options: {
         enabled: true,
@@ -167,12 +185,33 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', 'serve');
-  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:dist', 'notify_hooks']);
-  grunt.registerTask('serve', function(env) {
-    grunt.task.run(['githooks', 'clean:serve', 'copy:' + (env || 'dev'), 'build', 'connect:livereload', 'open', 'watch']);
+  grunt.registerTask('build', function(dest) {
+    grunt.task.run([
+      'buildBootstrapper',
+      'browserify:' + (dest || 'dist'),
+      'copy:' + (dest || 'dist'),
+      'notify_hooks'
+    ]);
   });
-  grunt.registerTask('buildAndroid', function(env) {
-    grunt.task.run(['clean:build', 'copy:' + (env || 'prod'), 'build', 'shell:buildAndroid', 'notify_hooks']);
+  grunt.registerTask('serve', function(environment) {
+    grunt.task.run([
+      'githooks',
+      'clean:serve',
+      'copy:' + (environment || 'dev'),
+      'build:serve',
+      'connect:livereload',
+      'open',
+      'watch'
+    ]);
+  });
+  grunt.registerTask('buildAndroid', function(environment) {
+    grunt.task.run([
+      'clean:dist',
+      'copy:' + (environment || 'prod'),
+      'build:dist',
+      'shell:buildAndroid',
+      'notify_hooks'
+    ]);
   });
   grunt.registerTask('restartAdb', ['shell:restartAdb']);
   grunt.registerTask('installAndroid', function(arch) {
