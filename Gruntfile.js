@@ -107,14 +107,15 @@ module.exports = function (grunt) {
       },
       dist: {
         src: ['game/main.js'],
-        dest: '.cache/game.js'
+        dest: 'dist/game.js'
+        // dest: '.cache/game.js'
       }
     },
     uglify: {
       dist: {
-        files: {
-          'dist/game.min.js': ['.cache/game.js']
-        }
+        // files: {
+        //   'dist/game.min.js': ['.cache/game.js']
+        // }
       },
       serve: {}
     },
