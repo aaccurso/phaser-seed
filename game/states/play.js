@@ -15,7 +15,7 @@ Play.prototype = {
     this.background = this.game.add.sprite(0, 0, 'background');
 
     // Create a new bird object
-    this.bird = new Bird(this.game, 100, this.game.height/2);
+    this.bird = new Bird(this.game, 100, this.game.height / 2);
     // and add it to the game
     this.game.add.existing(this.bird);
 
@@ -28,8 +28,8 @@ Play.prototype = {
 
     // create instructions
     this.instructionGroup = this.game.add.group();
-    this.instructionGroup.add(this.game.add.sprite(this.game.width/2, 100, 'getReady'));
-    this.instructionGroup.add(this.game.add.sprite(this.game.width/2, 325, 'instructions'));
+    this.instructionGroup.add(this.game.add.sprite(this.game.width / 2, 100, 'getReady'));
+    this.instructionGroup.add(this.game.add.sprite(this.game.width / 2, 325, 'instructions'));
     this.instructionGroup.setAll('anchor.x', 0.5);
     this.instructionGroup.setAll('anchor.y', 0.5);
 
@@ -41,7 +41,7 @@ Play.prototype = {
     this.score = 0;
     // Usage example of applyNamed
     this.scoreText = this.game.add.bitmapText.applyNamed(this, {
-      x: this.game.width/2,
+      x: this.game.width / 2,
       y: 10,
       font: 'flappyfont',
       text: this.score.toString(),
@@ -53,10 +53,10 @@ Play.prototype = {
   generatePipes: function() {
     var pipeY = this.game.rnd.integerInRange(-100, 100);
     var pipeGroup = this.pipes.getFirstExists(false);
-    if(!pipeGroup) {
+    if (!pipeGroup) {
       pipeGroup = new PipeGroup(this.game, this.pipes);
     }
-    pipeGroup.reset(this.game.width + pipeGroup.width/2, pipeY);
+    pipeGroup.reset(this.game.width + pipeGroup.width / 2, pipeY);
   },
   update: function() {
     // enable collisions between the bird and the ground
@@ -79,7 +79,7 @@ Play.prototype = {
     this.instructionGroup.destroy();
   },
   checkScore: function(pipeGroup) {
-    if(pipeGroup.exists && !pipeGroup.hasScored && pipeGroup.topPipe.world.x <= this.bird.world.x) {
+    if (pipeGroup.exists && !pipeGroup.hasScored && pipeGroup.topPipe.world.x <= this.bird.world.x) {
         pipeGroup.hasScored = true;
         this.score++;
         this.scoreSound.play();

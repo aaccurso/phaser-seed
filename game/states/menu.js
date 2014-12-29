@@ -38,12 +38,12 @@ Menu.prototype = {
     this.titleGroup.y = 100;
 
     // create an oscillating animation tween for the group
-    this.game.add.tween(this.titleGroup).to({y:115}, 350, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
+    this.game.add.tween(this.titleGroup).to({ y: 115 }, 350, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
 
     // Menu button
     // add our start button with a callback
-    this.startButton = this.game.add.button(this.game.width/2, 300, 'startButton', this.play, this);
-    this.startButton.anchor.setTo(0.5,0.5);
+    this.startButton = this.game.add.button(this.game.width / 2, 300, 'startButton', this.play, this);
+    this.startButton.anchor.set(0.5);
   },
   play: function() {
     // start button click handler

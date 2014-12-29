@@ -5,10 +5,10 @@ var Scoreboard = function(game) {
 
   Phaser.Group.call(this, game);
   gameover = this.create(this.game.width / 2, 100, 'gameover');
-  gameover.anchor.setTo(0.5, 0.5);
+  gameover.anchor.set(0.5);
 
   this.scoreboard = this.create(this.game.width / 2, 200, 'scoreboard');
-  this.scoreboard.anchor.setTo(0.5, 0.5);
+  this.scoreboard.anchor.set(0.5);
 
   this.scoreText = this.game.add.bitmapText(this.scoreboard.width, 180, 'flappyfont', '', 18);
   this.add(this.scoreText);
@@ -17,8 +17,8 @@ var Scoreboard = function(game) {
   this.add(this.bestScoreText);
 
   // add our start button with a callback
-  this.startButton = this.game.add.button(this.game.width/2, 300, 'startButton', this.startClick, this);
-  this.startButton.anchor.setTo(0.5,0.5);
+  this.startButton = this.game.add.button(this.game.width / 2, 300, 'startButton', this.startClick, this);
+  this.startButton.anchor.set(0.5);
 
   this.add(this.startButton);
 
@@ -35,12 +35,12 @@ Scoreboard.prototype.show = function(score) {
   // Step 1
   this.scoreText.setText(score.toString());
 
-  if(!!localStorage) {
+  if (!!localStorage) {
     // Step 2
     bestScore = localStorage.getItem('bestScore');
 
     // Step 3
-    if(!bestScore || bestScore < score) {
+    if (!bestScore || bestScore < score) {
       bestScore = score;
       localStorage.setItem('bestScore', bestScore);
     }
@@ -53,14 +53,14 @@ Scoreboard.prototype.show = function(score) {
   this.bestScoreText.setText(bestScore.toString());
 
   // Step 5 & 6
-  if(score >= 10 && score < 20)
+  if (score >= 10 && score < 20)
   {
     medal = this.game.add.sprite(-65 , 7, 'medals', 1);
-    medal.anchor.setTo(0.5, 0.5);
+    medal.anchor.set(0.5);
     this.scoreboard.addChild(medal);
-  } else if(score >= 20) {
+  } else if (score >= 20) {
     medal = this.game.add.sprite(-65 , 7, 'medals', 0);
-    medal.anchor.setTo(0.5, 0.5);
+    medal.anchor.set(0.5);
     this.scoreboard.addChild(medal);
   }
 
@@ -75,8 +75,8 @@ Scoreboard.prototype.show = function(score) {
     emitter.makeParticles('particle');
 
     emitter.setRotation(-100, 100);
-    emitter.setXSpeed(0,0);
-    emitter.setYSpeed(0,0);
+    emitter.setXSpeed(0, 0);
+    emitter.setYSpeed(0, 0);
     emitter.minParticleScale = 0.25;
     emitter.maxParticleScale = 0.5;
     emitter.setAll('body.allowGravity', false);

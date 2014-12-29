@@ -35,7 +35,7 @@ PipeGroup.prototype.reset = function(x, y) {
 };
 
 PipeGroup.prototype.checkWorldBounds = function() {
-  if(!this.topPipe.inWorld) {
+  if (!this.topPipe.inWorld) {
     this.exists = false;
   }
 };
