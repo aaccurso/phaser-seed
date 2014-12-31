@@ -1,5 +1,5 @@
 {
-  "name": "flappybird",
+  "name": "seed",
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
@@ -32,6 +32,7 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
+    "lodash": "^2.4.1",
     "named-args": "^0.2.0"
   }
 }
