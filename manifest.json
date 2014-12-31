@@ -1,15 +1,21 @@
 {
-  "name": "FlappyBird",
+  "name": "Seed",
   "version": "0.0.1",
-  "package": "io.aaccurso.flappybird",
+  "package": "com.graion.phaser-seed",
   "start_url": "index.html",
   "display": "fullscreen",
-  "orientation": "portrait",
+  "orientation": "landscape",
   "icons": [
     {
       "src": "icon.png",
       "type": "image/png",
       "sizes": "128x128"
     }
-  ]
+  ],
+  "xwalk_launch_screen": {
+    "ready_when": "custom",
+    "default": {
+      "background_color": "#000000"
+    }
+  }
 }
