@@ -26,13 +26,14 @@ module.exports = function (grunt) {
           '!game/main.js',
           'templates/*.js.tpl',
           'config.json',
-          'css/**/*.css'
+          'css/**/*.css',
+          'index.html'
         ],
         options: {
           spawn: false,
           livereload: LIVERELOAD_PORT
         },
-        tasks: ['build']
+        tasks: ['build:serve']
       }
     },
     connect: {
@@ -46,7 +47,7 @@ module.exports = function (grunt) {
           middleware: function (connect) {
             return [
               lrSnippet,
-              mountFolder(connect, 'dist')
+              mountFolder(connect, 'serve')
             ];
           }
         }
@@ -58,17 +59,34 @@ module.exports = function (grunt) {
       }
     },
     copy: {
+      serve: {
+        files: [
+          // includes files within path and its sub-directories
+          { expand: true, src: ['assets/**'], dest: 'serve/' },
+          { expand: true, src: ['fonts/**'], dest: 'serve/' },
+          { expand: true, src: ['css/**'], dest: 'serve/' },
+          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'serve/' },
+          { expand: true, flatten: true, src: [
+              'bower_components/*/build/*{.js,.map}',
+              'bower_components/*/dist/*{.js,.map}'
+            ], dest: 'serve/' },
+          { src: 'index.html', dest: 'serve/index.html' }
+        ]
+      },
       dist: {
         files: [
           // includes files within path and its sub-directories
           { expand: true, src: ['assets/**'], dest: 'dist/' },
           { expand: true, src: ['fonts/**'], dest: 'dist/' },
           { expand: true, src: ['css/**'], dest: 'dist/' },
-          { expand: true, flatten: true, src: ['game/plugins/*.js'], dest: 'dist/' },
-          { expand: true, flatten: true, src: ['bower_components/**/build/*.js'], dest: 'dist/' },
+          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'dist/' },
+          { expand: true, flatten: true, src: [
+              'bower_components/*/build/*{.js,.map}',
+              'bower_components/*/dist/*{.js,.map}'
+            ], dest: 'dist/' },
           { expand: true, src: ['icon.png'], dest: 'dist/' },
           { expand: true, src: ['manifest.json'], dest: 'dist/' },
-          { expand: true, src: ['index.html'], dest: 'dist/' }
+          { src: 'index.dist.html', dest: 'dist/index.html' }
         ]
       },
       dev: {
@@ -83,10 +101,27 @@ module.exports = function (grunt) {
       }
     },
     browserify: {
-      build: {
+      serve: {
+        src: ['game/main.js'],
+        dest: 'serve/game.js'
+      },
+      dist: {
         src: ['game/main.js'],
         dest: 'dist/game.js'
+        // dest: '.cache/game.js'
       }
+    },
+    uglify: {
+      dist: {
+        // files: {
+        //   'dist/game.min.js': ['.cache/game.js']
+        // }
+      },
+      serve: {}
+    },
+    clean: {
+      serve: ['serve'],
+      dist: ['dist', 'build'],
     },
     shell: {
       options: {
@@ -96,10 +131,10 @@ module.exports = function (grunt) {
         command: "./build_android.sh <%= manifest.package %> <%= manifest.name %> <%= manifest.version %>"
       },
       installAndroidx86: {
-        command: "adb install -r build/<%= manifest.name %>_<%= manifest.version %>_x86.apk"
+        command: "adb install -r build/*_x86.apk"
       },
       installAndroidarm: {
-        command: "adb install -r build/<%= manifest.name %>_<%= manifest.version %>_arm.apk"
+        command: "adb install -r build/*_arm.apk"
       },
       restartAdb: {
         command: [
@@ -116,7 +151,7 @@ module.exports = function (grunt) {
         commit: true,
         commitMessage: 'Release %VERSION%',
         commitFiles: ['package.json', 'bower.json', 'manifest.json'],
-        createTag: true,
+        createTag: false,
         tagName: '%VERSION%',
         tagMessage: 'Version %VERSION%',
         push: false,
@@ -134,36 +169,64 @@ module.exports = function (grunt) {
     jscs: {
       src: [
         'game/**/*.js',
-        '!game/main.js'
+        '!game/main.js',
+        '!game/plugins/*'
       ],
       options: {
-        config: '.jscsrc'
+        config: '.jscsrc',
+        reporter: require('jscs-stylish').path
       }
     },
     githooks: {
       all: {
         // Will run the jshint and test:unit tasks at every commit
-        'pre-commit': 'jshint jscs',
+        'pre-commit': 'checkStyle',
       }
     },
-    clean: {
-      serve: ['dist'],
-      build: ['dist', 'build'],
+    'notify_hooks': {
+      options: {
+        enabled: true,
+        'max_jshint_notifications': 5, // maximum number of notifications from jshint output
+        success: true, // whether successful grunt executions should be notified automatically
+        duration: 3 // the duration of notification in seconds, for `notify-send only
+      }
     },
   });
 
   grunt.registerTask('default', 'serve');
-  grunt.registerTask('build', ['buildBootstrapper', 'browserify', 'copy:dist']);
-  grunt.registerTask('serve', function(env) {
-    grunt.task.run(['githooks', 'clean:serve', 'copy:' + (env || 'dev'), 'build', 'connect:livereload', 'open', 'watch']);
+  grunt.registerTask('build', function(dest) {
+    grunt.task.run([
+      'buildBootstrapper',
+      'browserify:' + (dest || 'dist'),
+      'uglify:' + (dest || 'dist'),
+      'copy:' + (dest || 'dist'),
+      'notify_hooks'
+    ]);
   });
-  grunt.registerTask('buildAndroid', function(env) {
-    grunt.task.run(['clean:build', 'copy:' + (env || 'prod'), 'build', 'shell:buildAndroid']);
+  grunt.registerTask('serve', function(environment) {
+    grunt.task.run([
+      'githooks',
+      'clean:serve',
+      'copy:' + (environment || 'dev'),
+      'build:serve',
+      'connect:livereload',
+      'open',
+      'watch'
+    ]);
+  });
+  grunt.registerTask('buildAndroid', function(environment) {
+    grunt.task.run([
+      'clean:dist',
+      'copy:' + (environment || 'prod'),
+      'build:dist',
+      'shell:buildAndroid',
+      'notify_hooks'
+    ]);
   });
   grunt.registerTask('restartAdb', ['shell:restartAdb']);
   grunt.registerTask('installAndroid', function(arch) {
     // arch is x86 (Intel based tablets) or arm (non-Intel)
-    grunt.task.run(['shell:installAndroid' + (arch || 'arm')]);
+    grunt.task.run(['shell:installAndroid' + (arch || 'arm'), 'notify_hooks']);
   });
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');
@@ -181,4 +244,5 @@ module.exports = function (grunt) {
     bootstrapper = grunt.template.process(bootstrapper,{data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
+  grunt.registerTask('checkStyle', ['jshint', 'notify_hooks', 'jscs', 'notify_hooks']);
 };

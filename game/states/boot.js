@@ -6,22 +6,34 @@ function Boot() {}
 
 Boot.prototype = {
   init: function() {
+    this._initGlobalReferences();
+    this._initScaleAndOrientation();
+    this._initPlugins();
+  },
+  preload: function() {
+    this.load.image('preloader', 'assets/preloader.png');
+    // Removes launch screen on mobile
+    if (window.screen.show) {
+      window.screen.show();
+    }
+  },
+  create: function() {
+    this.game.input.maxPointers = 1;
+    this.state.start('preload');
+  },
+  _initGlobalReferences: function() {
     this.game.global = {
       CONFIG: require('../config.json')
     };
   },
-  preload: function() {
-    // Scale and orientation
-    this.game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
-    this.game.scale.setScreenSize();
-    this.game.scale.refresh();
-    this.game.scale.forcePortrait = true;
-
-    this.load.image('preloader', 'assets/preloader.gif');
+  _initScaleAndOrientation: function() {
+    this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.scale.pageAlignHorizontally = true;
+    this.scale.pageAlignVertically = true;
+    this.scale.forceOrientation(true);
   },
-  create: function() {
-    this.game.input.maxPointers = 1;
-    this.game.state.start('preload');
+  _initPlugins: function() {
+
   }
 };
 
