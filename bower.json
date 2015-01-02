@@ -2,6 +2,6 @@
   "name": "flappybird",
   "version": "0.0.1",
   "dependencies": {
-    "phaser-official": "2.1.2"
+    "phaser-official": "~2.2.1"
   }
 }
