@@ -10,3 +10,4 @@ dist
 build
 *.log
 game/config.json
+game/main.js
