@@ -2,6 +2,8 @@
 .DS_Store
 node_modules
 bower_components
+plugins
+platforms
 serve
 www
 dist
