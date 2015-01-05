@@ -7,7 +7,7 @@ if (window.cordova) {
 }
 
 function onDeviceReady() {
-  var game = new Phaser.Game(<%= gameWidth %>, <%= gameHeight %>, Phaser.AUTO, '<%= _.slugify(projectName) %>');
+  var game = new Phaser.Game(<%= gameWidth %>, <%= gameHeight %>, Phaser.<%= renderer %>, '<%= _.slugify(projectName) %>');
   <% _.forEach(gameStates, function(gameState) {  %>
   game.state.add('<%= gameState.shortName %>', require('./states/<%= gameState.shortName %>'));<% }); %>
 
