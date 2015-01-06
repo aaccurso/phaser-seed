@@ -59,21 +59,6 @@ module.exports = function (grunt) {
     },
     copy: {
       serve: {
-        options: {
-          noProcess: ['assets/**', 'fonts/**'],
-          process: function(content) {
-            return grunt.template.process(content, {
-              data: {
-                dependencies: [
-                  'cordova.js',
-                  'phaser.js',
-                  'phaser-state-transition-plugin.min.js',
-                  'game.js'
-                ]
-              }
-            });
-          }
-        },
         files: [
           // includes files within path and its sub-directories
           { expand: true, src: ['assets/**', 'fonts/**', 'css/**'], dest: 'www/' },
@@ -81,26 +66,10 @@ module.exports = function (grunt) {
             'game/plugins/*{.js,.map}',
             'bower_components/*/build/*{.js,.map}',
             'bower_components/*/dist/*{.js,.map}'
-          ], dest: 'www/' },
-          { src: 'templates/_index.html.tpl', dest: 'www/index.html' }
+          ], dest: 'www/' }
         ]
       },
       dist: {
-        options: {
-          noProcess: ['assets/**', 'fonts/**'],
-          process: function(content) {
-            return grunt.template.process(content, {
-              data: {
-                dependencies: [
-                  'cordova.js',
-                  'phaser.js',
-                  'phaser-state-transition-plugin.min.js',
-                  'game.js'
-                ]
-              }
-            });
-          }
-        },
         files: [
           // includes files within path and its sub-directories
           { expand: true, src: [
@@ -114,18 +83,47 @@ module.exports = function (grunt) {
             'game/plugins/*{.js,.map}',
             'bower_components/*/build/*{.js,.map}',
             'bower_components/*/dist/*{.js,.map}'
-          ], dest: 'dist/' },
-          { src: 'templates/_index.html.tpl', dest: 'dist/index.html' }
+          ], dest: 'dist/' }
         ]
       },
       dev: {
+        options: {
+          process: function(content) {
+            return grunt.template.process(content, {
+              data: {
+                dependencies: [
+                  'cordova.js',
+                  'phaser.js',
+                  'phaser-state-transition-plugin.min.js',
+                  'game.js'
+                ]
+              }
+            });
+          }
+        },
         files: [
-          { src: 'game/config/config.dev.json', dest: 'game/config.json' }
+          { src: 'game/config/config.dev.json', dest: 'game/config.json' },
+          { src: 'templates/_index.html.tpl', dest: 'www/index.html' }
         ]
       },
       prod: {
+        options: {
+          process: function(content) {
+            return grunt.template.process(content, {
+              data: {
+                dependencies: [
+                  'cordova.js',
+                  'phaser.js',
+                  'phaser-state-transition-plugin.min.js',
+                  'game.js'
+                ]
+              }
+            });
+          }
+        },
         files: [
-          { src: 'game/config/config.prod.json', dest: 'game/config.json' }
+          { src: 'game/config/config.prod.json', dest: 'game/config.json' },
+          { src: 'templates/_index.html.tpl', dest: 'dist/index.html' }
         ]
       }
     },
@@ -209,7 +207,7 @@ module.exports = function (grunt) {
     githooks: {
       all: {
         // Will run the jshint and test:unit tasks at every commit
-        'pre-commit': 'checkStyle',
+        'pre-commit': 'jshint jscs',
       }
     },
     'notify_hooks': {
@@ -274,7 +272,6 @@ module.exports = function (grunt) {
     bootstrapper = grunt.template.process(bootstrapper, {data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
-  grunt.registerTask('checkStyle', ['jshint', 'notify_hooks', 'jscs', 'notify_hooks']);
   grunt.registerTask('cordovaSetup', function() {
     var pkg = grunt.file.readJSON('package.json');
 
