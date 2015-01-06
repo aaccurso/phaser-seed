@@ -25,6 +25,7 @@
     "jshint-stylish": "^1.0.0",
     "matchdep": "~0.1.2",
     "moment": "~2.0.0",
+    "shelljs": "^0.3.0",
     "underscore": "*",
     "underscore.string": "*"
   },

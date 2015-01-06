@@ -1,17 +1,14 @@
 // Generated on 2014-03-28 using generator-phaser-official 0.0.8-rc-2
 'use strict';
-var config = require('./config.json');
-var _ = require('underscore');
-_.str = require('underscore.string');
+var config = require('./config.json'),
+    _ = require('underscore'),
+    shell = require('shelljs'),
+    LIVERELOAD_PORT = 35729,
+    lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 
-// Mix in non-conflict functions to Underscore namespace if you want
-_.mixin(_.str.exports());
-
-var LIVERELOAD_PORT = 35729;
-var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
-var mountFolder = function (connect, dir) {
+function mountFolder(connect, dir) {
   return connect.static(require('path').resolve(dir));
-};
+}
 
 module.exports = function (grunt) {
   // load all grunt tasks
@@ -239,10 +236,25 @@ module.exports = function (grunt) {
       }
     });
     config.gameStates = gameStates;
-    console.log(config);
     var bootstrapper = grunt.file.read('templates/_main.js.tpl');
     bootstrapper = grunt.template.process(bootstrapper,{data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
   grunt.registerTask('checkStyle', ['jshint', 'notify_hooks', 'jscs', 'notify_hooks']);
+  grunt.registerTask('cordovaSetup', function() {
+    var pkg = grunt.file.readJSON('package.json');
+
+    if (!pkg.platforms) {
+      return grunt.log.error('Platforms not found.');
+    }
+    _.forEach(pkg.platforms, function (platform) {
+      grunt.log.writeln('Installing platform ' + platform);
+      shell.exec('cordova platform add ' + platform);
+    });
+    _.forEach(pkg.plugins, function (plugin) {
+      grunt.log.writeln('Installing plugin ' + plugin);
+      shell.exec('cordova plugin add ' + plugin);
+    });
+    grunt.task.run(['notify_hooks']);
+  });
 };
