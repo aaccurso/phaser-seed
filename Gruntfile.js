@@ -47,7 +47,7 @@ module.exports = function (grunt) {
           middleware: function (connect) {
             return [
               lrSnippet,
-              mountFolder(connect, 'serve')
+              mountFolder(connect, 'www')
             ];
           }
         }
@@ -62,15 +62,15 @@ module.exports = function (grunt) {
       serve: {
         files: [
           // includes files within path and its sub-directories
-          { expand: true, src: ['assets/**'], dest: 'serve/' },
-          { expand: true, src: ['fonts/**'], dest: 'serve/' },
-          { expand: true, src: ['css/**'], dest: 'serve/' },
-          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'serve/' },
+          { expand: true, src: ['assets/**'], dest: 'www/' },
+          { expand: true, src: ['fonts/**'], dest: 'www/' },
+          { expand: true, src: ['css/**'], dest: 'www/' },
+          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'www/' },
           { expand: true, flatten: true, src: [
               'bower_components/*/build/*{.js,.map}',
               'bower_components/*/dist/*{.js,.map}'
-            ], dest: 'serve/' },
-          { src: 'index.html', dest: 'serve/index.html' }
+            ], dest: 'www/' },
+          { src: 'index.html', dest: 'www/index.html' }
         ]
       },
       dist: {
@@ -103,7 +103,7 @@ module.exports = function (grunt) {
     browserify: {
       serve: {
         src: ['game/main.js'],
-        dest: 'serve/game.js'
+        dest: 'www/game.js'
       },
       dist: {
         src: ['game/main.js'],
@@ -146,11 +146,11 @@ module.exports = function (grunt) {
     },
     bump: {
       options: {
-        files: ['package.json', 'bower.json', 'manifest.json'],
+        files: ['package.json', 'bower.json', 'manifest.json', 'config.xml'],
         updateConfigs: [],
         commit: true,
         commitMessage: 'Release %VERSION%',
-        commitFiles: ['package.json', 'bower.json', 'manifest.json'],
+        commitFiles: ['package.json', 'bower.json', 'manifest.json', 'config.xml'],
         createTag: false,
         tagName: '%VERSION%',
         tagMessage: 'Version %VERSION%',

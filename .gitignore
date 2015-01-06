@@ -2,8 +2,12 @@
 .DS_Store
 node_modules
 bower_components
+plugins
+platforms
 serve
+www
 dist
 build
 *.log
 game/config.json
+game/main.js

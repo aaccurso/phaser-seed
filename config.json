@@ -1,5 +1,6 @@
 {
   "projectName": "game",
   "gameWidth": "1280",
-  "gameHeight": "690"
+  "gameHeight": "690",
+  "renderer": "AUTO"
 }
