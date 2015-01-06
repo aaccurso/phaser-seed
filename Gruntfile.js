@@ -6,6 +6,9 @@ var config = require('./config.json'),
     LIVERELOAD_PORT = 35729,
     lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 
+_.str = require('underscore.string');
+_.mixin(_.str.exports());
+
 function mountFolder(connect, dir) {
   return connect.static(require('path').resolve(dir));
 }
@@ -19,12 +22,11 @@ module.exports = function (grunt) {
     watch: {
       scripts: {
         files: [
-          'game/**/*.js',
           '!game/main.js',
-          'templates/*.js.tpl',
+          'game/**/*.js',
+          'templates/*.tpl',
           'config.json',
-          'css/**/*.css',
-          'index.html'
+          'css/**/*.css'
         ],
         options: {
           spawn: false,
@@ -57,33 +59,63 @@ module.exports = function (grunt) {
     },
     copy: {
       serve: {
+        options: {
+          noProcess: ['assets/**', 'fonts/**'],
+          process: function(content) {
+            return grunt.template.process(content, {
+              data: {
+                dependencies: [
+                  'cordova.js',
+                  'phaser.js',
+                  'phaser-state-transition-plugin.min.js',
+                  'game.js'
+                ]
+              }
+            });
+          }
+        },
         files: [
           // includes files within path and its sub-directories
-          { expand: true, src: ['assets/**'], dest: 'www/' },
-          { expand: true, src: ['fonts/**'], dest: 'www/' },
-          { expand: true, src: ['css/**'], dest: 'www/' },
-          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'www/' },
+          { expand: true, src: ['assets/**', 'fonts/**', 'css/**'], dest: 'www/' },
           { expand: true, flatten: true, src: [
-              'bower_components/*/build/*{.js,.map}',
-              'bower_components/*/dist/*{.js,.map}'
-            ], dest: 'www/' },
-          { src: 'index.html', dest: 'www/index.html' }
+            'game/plugins/*{.js,.map}',
+            'bower_components/*/build/*{.js,.map}',
+            'bower_components/*/dist/*{.js,.map}'
+          ], dest: 'www/' },
+          { src: 'templates/_index.html.tpl', dest: 'www/index.html' }
         ]
       },
       dist: {
+        options: {
+          noProcess: ['assets/**', 'fonts/**'],
+          process: function(content) {
+            return grunt.template.process(content, {
+              data: {
+                dependencies: [
+                  'cordova.js',
+                  'phaser.js',
+                  'phaser-state-transition-plugin.min.js',
+                  'game.js'
+                ]
+              }
+            });
+          }
+        },
         files: [
           // includes files within path and its sub-directories
-          { expand: true, src: ['assets/**'], dest: 'dist/' },
-          { expand: true, src: ['fonts/**'], dest: 'dist/' },
-          { expand: true, src: ['css/**'], dest: 'dist/' },
-          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'dist/' },
+          { expand: true, src: [
+            'assets/**',
+            'fonts/**',
+            'css/**',
+            'icon.png',
+            'manifest.json'
+          ], dest: 'dist/' },
           { expand: true, flatten: true, src: [
-              'bower_components/*/build/*{.js,.map}',
-              'bower_components/*/dist/*{.js,.map}'
-            ], dest: 'dist/' },
-          { expand: true, src: ['icon.png'], dest: 'dist/' },
-          { expand: true, src: ['manifest.json'], dest: 'dist/' },
-          { src: 'index.dist.html', dest: 'dist/index.html' }
+            'game/plugins/*{.js,.map}',
+            'bower_components/*/build/*{.js,.map}',
+            'bower_components/*/dist/*{.js,.map}'
+          ], dest: 'dist/' },
+          { src: 'templates/_index.html.tpl', dest: 'dist/index.html' }
         ]
       },
       dev: {
@@ -189,7 +221,8 @@ module.exports = function (grunt) {
       }
     },
   });
-
+  
+  // Register Grunt Tasks
   grunt.registerTask('default', 'serve');
   grunt.registerTask('build', function(dest) {
     grunt.task.run([
@@ -225,10 +258,12 @@ module.exports = function (grunt) {
     // arch is x86 (Intel based tablets) or arm (non-Intel)
     grunt.task.run(['shell:installAndroid' + (arch || 'arm'), 'notify_hooks']);
   });
-  grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
-    var stateFiles = grunt.file.expand('game/states/*.js');
-    var gameStates = [];
-    var statePattern = new RegExp(/(\w+).js$/);
+  grunt.registerTask('buildBootstrapper', function() {
+    var stateFiles = grunt.file.expand('game/states/*.js'),
+        gameStates = [],
+        statePattern = new RegExp(/(\w+).js$/),
+        bootstrapper = grunt.file.read('templates/_main.js.tpl');
+
     stateFiles.forEach(function(file) {
       var state = file.match(statePattern)[1];
       if (!!state) {
@@ -236,8 +271,7 @@ module.exports = function (grunt) {
       }
     });
     config.gameStates = gameStates;
-    var bootstrapper = grunt.file.read('templates/_main.js.tpl');
-    bootstrapper = grunt.template.process(bootstrapper,{data: config});
+    bootstrapper = grunt.template.process(bootstrapper, {data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
   grunt.registerTask('checkStyle', ['jshint', 'notify_hooks', 'jscs', 'notify_hooks']);

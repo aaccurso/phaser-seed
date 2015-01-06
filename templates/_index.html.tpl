@@ -4,13 +4,13 @@
 <!--[if IE 8]>         <html class="lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html> <!--<![endif]-->
 <head>
-  <title>Reciclaje</title>
+  <title>Seed</title>
   <link href="css/styles.css" rel="stylesheet" type="text/css">
 </head>
 <body>
   <div id="game"></div>
-  <script src="cordova.js"></script>
-  <script src="phaser.js"></script>
-  <script src="game.js"></script>
+  <% _.forEach(dependencies, function(dependency) {  %>
+  <script src="<%= dependency %>"></script>
+  <% }); %>
 </body>
 </html>
