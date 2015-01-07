@@ -46,7 +46,7 @@ module.exports = function (grunt) {
           middleware: function (connect) {
             return [
               lrSnippet,
-              mountFolder(connect, 'www')
+              mountFolder(connect, 'serve')
             ];
           }
         }
@@ -61,12 +61,13 @@ module.exports = function (grunt) {
       serve: {
         files: [
           // includes files within path and its sub-directories
-          { expand: true, src: ['assets/**', 'fonts/**', 'css/**'], dest: 'www/' },
+          { expand: true, src: ['assets/**', 'fonts/**', 'css/**'], dest: 'serve/' },
           { expand: true, flatten: true, src: [
             'game/plugins/*{.js,.map}',
             'bower_components/*/build/*{.js,.map}',
-            'bower_components/*/dist/*{.js,.map}'
-          ], dest: 'www/' }
+            'bower_components/*/dist/*{.js,.map}',
+            'game/index.html'
+          ], dest: 'serve/' }
         ]
       },
       dist: {
@@ -82,7 +83,8 @@ module.exports = function (grunt) {
           { expand: true, flatten: true, src: [
             'game/plugins/*{.js,.map}',
             'bower_components/*/build/*{.js,.map}',
-            'bower_components/*/dist/*{.js,.map}'
+            'bower_components/*/dist/*{.js,.map}',
+            'game/index.html'
           ], dest: 'dist/' }
         ]
       },
@@ -103,7 +105,7 @@ module.exports = function (grunt) {
         },
         files: [
           { src: 'game/config/config.dev.json', dest: 'game/config.json' },
-          { src: 'templates/_index.html.tpl', dest: 'www/index.html' }
+          { src: 'templates/_index.html.tpl', dest: 'game/index.html' }
         ]
       },
       prod: {
@@ -123,14 +125,17 @@ module.exports = function (grunt) {
         },
         files: [
           { src: 'game/config/config.prod.json', dest: 'game/config.json' },
-          { src: 'templates/_index.html.tpl', dest: 'dist/index.html' }
+          { src: 'templates/_index.html.tpl', dest: 'game/index.html' }
         ]
+      },
+      cordova: {
+        files: [{ expand: true, flatten: true, src: 'dist/*', dest: 'www' }]
       }
     },
     browserify: {
       serve: {
         src: ['game/main.js'],
-        dest: 'www/game.js'
+        dest: 'serve/game.js'
       },
       dist: {
         src: ['game/main.js'],
@@ -148,7 +153,7 @@ module.exports = function (grunt) {
     },
     clean: {
       serve: ['serve'],
-      dist: ['dist', 'build'],
+      dist: ['dist', 'build', 'www'],
     },
     shell: {
       options: {
@@ -272,7 +277,7 @@ module.exports = function (grunt) {
     bootstrapper = grunt.template.process(bootstrapper, {data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
-  grunt.registerTask('cordovaSetup', function() {
+  grunt.registerTask('cordovaSetup', function(environment) {
     var pkg = grunt.file.readJSON('package.json');
 
     if (!pkg.platforms) {
@@ -286,6 +291,11 @@ module.exports = function (grunt) {
       grunt.log.writeln('Installing plugin ' + plugin);
       shell.exec('cordova plugin add ' + plugin);
     });
-    grunt.task.run(['notify_hooks']);
+    grunt.task.run([
+      'clean:dist',
+      'copy:' + (environment || 'prod'),
+      'build:dist',
+      'copy:cordova'
+    ]);
   });
 };
