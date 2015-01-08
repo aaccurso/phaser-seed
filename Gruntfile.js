@@ -127,9 +127,6 @@ module.exports = function (grunt) {
           { src: 'game/config/config.prod.json', dest: 'game/config.json' },
           { src: 'templates/_index.html.tpl', dest: 'game/index.html' }
         ]
-      },
-      cordova: {
-        files: [{ expand: true, flatten: true, src: 'dist/*', dest: 'www' }]
       }
     },
     browserify: {
@@ -153,26 +150,32 @@ module.exports = function (grunt) {
     },
     clean: {
       serve: ['serve'],
-      dist: ['dist', 'build', 'www'],
+      dist: ['dist', 'build'],
     },
     shell: {
       options: {
         stderr: false
       },
       buildAndroid: {
-        command: "./build_android.sh <%= manifest.package %> <%= manifest.name %> <%= manifest.version %>"
+        command: './build_android.sh <%= manifest.package %> <%= manifest.name %> <%= manifest.version %>'
       },
       installAndroidx86: {
-        command: "adb install -r build/*_x86.apk"
+        command: 'adb install -r build/*_x86.apk'
       },
       installAndroidarm: {
-        command: "adb install -r build/*_arm.apk"
+        command: 'adb install -r build/*_arm.apk'
       },
       restartAdb: {
         command: [
           'sudo $(which adb) kill-server',
           'sudo $(which adb) start-server',
           'adb devices'
+        ].join('&&')
+      },
+      prepareCordova: {
+        command: [
+          'rm -rf www',
+          'cp -a dist www'
         ].join('&&')
       }
     },
@@ -211,7 +214,6 @@ module.exports = function (grunt) {
     },
     githooks: {
       all: {
-        // Will run the jshint and test:unit tasks at every commit
         'pre-commit': 'jshint jscs',
       }
     },
@@ -295,7 +297,7 @@ module.exports = function (grunt) {
       'clean:dist',
       'copy:' + (environment || 'prod'),
       'build:dist',
-      'copy:cordova'
+      'shell:prepareCordova'
     ]);
   });
 };
