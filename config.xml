@@ -7,7 +7,8 @@
     <author email="dev@cordova.apache.org" href="http://cordova.io">
       Graion Team
     </author>
-    <content src="index.html" />
-    <access origin="*" />
-    <preference name="orientation" value="landscape" />
+  <content src="index.html"/>
+  <access origin="*"/>
+  <preference name="orientation" value="landscape"/>
+  <preference name="Fullscreen" value="true"/>
 </widget>
