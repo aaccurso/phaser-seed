@@ -226,7 +226,7 @@ module.exports = function (grunt) {
       }
     },
   });
-  
+
   // Register Grunt Tasks
   grunt.registerTask('default', 'serve');
   grunt.registerTask('build', function(dest) {
@@ -282,6 +282,12 @@ module.exports = function (grunt) {
   grunt.registerTask('cordovaSetup', function(environment) {
     var pkg = grunt.file.readJSON('package.json');
 
+    grunt.task.run([
+      'clean:dist',
+      'copy:' + (environment || 'prod'),
+      'build:dist',
+      'shell:prepareCordova'
+    ]);
     if (!pkg.platforms) {
       return grunt.log.error('Platforms not found.');
     }
@@ -293,11 +299,5 @@ module.exports = function (grunt) {
       grunt.log.writeln('Installing plugin ' + plugin);
       shell.exec('cordova plugin add ' + plugin);
     });
-    grunt.task.run([
-      'clean:dist',
-      'copy:' + (environment || 'prod'),
-      'build:dist',
-      'shell:prepareCordova'
-    ]);
   });
 };
