@@ -1,17 +1,17 @@
 // Generated on 2014-03-28 using generator-phaser-official 0.0.8-rc-2
 'use strict';
-var config = require('./config.json');
-var _ = require('underscore');
-_.str = require('underscore.string');
+var config = require('./config.json'),
+    _ = require('underscore'),
+    shell = require('shelljs'),
+    LIVERELOAD_PORT = 35729,
+    lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 
-// Mix in non-conflict functions to Underscore namespace if you want
+_.str = require('underscore.string');
 _.mixin(_.str.exports());
 
-var LIVERELOAD_PORT = 35729;
-var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
-var mountFolder = function (connect, dir) {
+function mountFolder(connect, dir) {
   return connect.static(require('path').resolve(dir));
-};
+}
 
 module.exports = function (grunt) {
   // load all grunt tasks
@@ -22,12 +22,11 @@ module.exports = function (grunt) {
     watch: {
       scripts: {
         files: [
-          'game/**/*.js',
           '!game/main.js',
-          'templates/*.js.tpl',
+          'game/**/*.js',
+          'templates/*.tpl',
           'config.json',
-          'css/**/*.css',
-          'index.html'
+          'css/**/*.css'
         ],
         options: {
           spawn: false,
@@ -47,7 +46,7 @@ module.exports = function (grunt) {
           middleware: function (connect) {
             return [
               lrSnippet,
-              mountFolder(connect, 'www')
+              mountFolder(connect, 'serve')
             ];
           }
         }
@@ -62,48 +61,78 @@ module.exports = function (grunt) {
       serve: {
         files: [
           // includes files within path and its sub-directories
-          { expand: true, src: ['assets/**'], dest: 'www/' },
-          { expand: true, src: ['fonts/**'], dest: 'www/' },
-          { expand: true, src: ['css/**'], dest: 'www/' },
-          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'www/' },
+          { expand: true, src: ['assets/**', 'fonts/**', 'css/**'], dest: 'serve/' },
           { expand: true, flatten: true, src: [
-              'bower_components/*/build/*{.js,.map}',
-              'bower_components/*/dist/*{.js,.map}'
-            ], dest: 'www/' },
-          { src: 'index.html', dest: 'www/index.html' }
+            'game/plugins/*{.js,.map}',
+            'bower_components/*/build/*{.js,.map}',
+            'bower_components/*/dist/*{.js,.map}',
+            'game/index.html'
+          ], dest: 'serve/' }
         ]
       },
       dist: {
         files: [
           // includes files within path and its sub-directories
-          { expand: true, src: ['assets/**'], dest: 'dist/' },
-          { expand: true, src: ['fonts/**'], dest: 'dist/' },
-          { expand: true, src: ['css/**'], dest: 'dist/' },
-          { expand: true, flatten: true, src: ['game/plugins/*{.js,.map}'], dest: 'dist/' },
+          { expand: true, src: [
+            'assets/**',
+            'fonts/**',
+            'css/**',
+            'icon.png',
+            'manifest.json'
+          ], dest: 'dist/' },
           { expand: true, flatten: true, src: [
-              'bower_components/*/build/*{.js,.map}',
-              'bower_components/*/dist/*{.js,.map}'
-            ], dest: 'dist/' },
-          { expand: true, src: ['icon.png'], dest: 'dist/' },
-          { expand: true, src: ['manifest.json'], dest: 'dist/' },
-          { src: 'index.dist.html', dest: 'dist/index.html' }
+            'game/plugins/*{.js,.map}',
+            'bower_components/*/build/*{.js,.map}',
+            'bower_components/*/dist/*{.js,.map}',
+            'game/index.html'
+          ], dest: 'dist/' }
         ]
       },
       dev: {
+        options: {
+          process: function(content) {
+            return grunt.template.process(content, {
+              data: {
+                dependencies: [
+                  'cordova.js',
+                  'phaser.js',
+                  'phaser-state-transition-plugin.min.js',
+                  'game.js'
+                ]
+              }
+            });
+          }
+        },
         files: [
-          { src: 'game/config/config.dev.json', dest: 'game/config.json' }
+          { src: 'game/config/config.dev.json', dest: 'game/config.json' },
+          { src: 'templates/_index.html.tpl', dest: 'game/index.html' }
         ]
       },
       prod: {
+        options: {
+          process: function(content) {
+            return grunt.template.process(content, {
+              data: {
+                dependencies: [
+                  'cordova.js',
+                  'phaser.js',
+                  'phaser-state-transition-plugin.min.js',
+                  'game.js'
+                ]
+              }
+            });
+          }
+        },
         files: [
-          { src: 'game/config/config.prod.json', dest: 'game/config.json' }
+          { src: 'game/config/config.prod.json', dest: 'game/config.json' },
+          { src: 'templates/_index.html.tpl', dest: 'game/index.html' }
         ]
       }
     },
     browserify: {
       serve: {
         src: ['game/main.js'],
-        dest: 'www/game.js'
+        dest: 'serve/game.js'
       },
       dist: {
         src: ['game/main.js'],
@@ -128,19 +157,25 @@ module.exports = function (grunt) {
         stderr: false
       },
       buildAndroid: {
-        command: "./build_android.sh <%= manifest.package %> <%= manifest.name %> <%= manifest.version %>"
+        command: './build_android.sh <%= manifest.package %> <%= manifest.name %> <%= manifest.version %>'
       },
       installAndroidx86: {
-        command: "adb install -r build/*_x86.apk"
+        command: 'adb install -r build/*_x86.apk'
       },
       installAndroidarm: {
-        command: "adb install -r build/*_arm.apk"
+        command: 'adb install -r build/*_arm.apk'
       },
       restartAdb: {
         command: [
           'sudo $(which adb) kill-server',
           'sudo $(which adb) start-server',
           'adb devices'
+        ].join('&&')
+      },
+      prepareCordova: {
+        command: [
+          'rm -rf www',
+          'cp -a dist www'
         ].join('&&')
       }
     },
@@ -179,8 +214,7 @@ module.exports = function (grunt) {
     },
     githooks: {
       all: {
-        // Will run the jshint and test:unit tasks at every commit
-        'pre-commit': 'checkStyle',
+        'pre-commit': 'jshint jscs',
       }
     },
     'notify_hooks': {
@@ -193,6 +227,7 @@ module.exports = function (grunt) {
     },
   });
 
+  // Register Grunt Tasks
   grunt.registerTask('default', 'serve');
   grunt.registerTask('build', function(dest) {
     grunt.task.run([
@@ -228,10 +263,12 @@ module.exports = function (grunt) {
     // arch is x86 (Intel based tablets) or arm (non-Intel)
     grunt.task.run(['shell:installAndroid' + (arch || 'arm'), 'notify_hooks']);
   });
-  grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
-    var stateFiles = grunt.file.expand('game/states/*.js');
-    var gameStates = [];
-    var statePattern = new RegExp(/(\w+).js$/);
+  grunt.registerTask('buildBootstrapper', function() {
+    var stateFiles = grunt.file.expand('game/states/*.js'),
+        gameStates = [],
+        statePattern = new RegExp(/(\w+).js$/),
+        bootstrapper = grunt.file.read('templates/_main.js.tpl');
+
     stateFiles.forEach(function(file) {
       var state = file.match(statePattern)[1];
       if (!!state) {
@@ -239,10 +276,28 @@ module.exports = function (grunt) {
       }
     });
     config.gameStates = gameStates;
-    console.log(config);
-    var bootstrapper = grunt.file.read('templates/_main.js.tpl');
-    bootstrapper = grunt.template.process(bootstrapper,{data: config});
+    bootstrapper = grunt.template.process(bootstrapper, {data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
-  grunt.registerTask('checkStyle', ['jshint', 'notify_hooks', 'jscs', 'notify_hooks']);
+  grunt.registerTask('cordovaSetup', function(environment) {
+    var pkg = grunt.file.readJSON('package.json');
+
+    grunt.task.run([
+      'clean:dist',
+      'copy:' + (environment || 'prod'),
+      'build:dist',
+      'shell:prepareCordova'
+    ]);
+    if (!pkg.platforms) {
+      return grunt.log.error('Platforms not found.');
+    }
+    _.forEach(pkg.platforms, function (platform) {
+      grunt.log.writeln('Installing platform ' + platform);
+      shell.exec('cordova platform add ' + platform);
+    });
+    _.forEach(pkg.plugins, function (plugin) {
+      grunt.log.writeln('Installing plugin ' + plugin);
+      shell.exec('cordova plugin add ' + plugin);
+    });
+  });
 };

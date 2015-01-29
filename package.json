@@ -25,6 +25,7 @@
     "jshint-stylish": "^1.0.0",
     "matchdep": "~0.1.2",
     "moment": "~2.0.0",
+    "shelljs": "^0.3.0",
     "underscore": "*",
     "underscore.string": "*"
   },
@@ -34,5 +35,8 @@
   "dependencies": {
     "lodash": "^2.4.1",
     "named-args": "^0.2.0"
-  }
+  },
+  "plugins": [
+    "https://github.com/mesmotronic/cordova-fullscreen-plugin.git"
+  ]
 }
