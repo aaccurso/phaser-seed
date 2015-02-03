@@ -19,5 +19,13 @@
   "requireSpaceAfterBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!=="],
   "disallowMixedSpacesAndTabs": true,
   "disallowTrailingWhitespace": true,
-  "requireCapitalizedConstructors": true
+  "requireCapitalizedConstructors": true,
+  "disallowMultipleLineBreaks": true,
+  "requireSpaceBeforeBlockStatements": true,
+  "validateQuoteMarks": {
+    "escape": true,
+    "mark": "'"
+  },
+  "validateParameterSeparator": ", ",
+  "requireSpaceBeforeObjectValues": true
 }
