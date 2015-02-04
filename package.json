@@ -33,7 +33,7 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
-    "lodash": "^2.4.1",
+    "lodash": "^3.1.0",
     "named-args": "^0.2.0"
   },
   "plugins": [
