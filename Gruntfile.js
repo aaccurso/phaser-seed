@@ -175,7 +175,8 @@ module.exports = function (grunt) {
       prepareCordova: {
         command: [
           'rm -rf www',
-          'cp -a dist www'
+          'cp -a dist www',
+          'cordova-icon'
         ].join('&&')
       }
     },
