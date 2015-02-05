@@ -36,6 +36,9 @@
     "lodash": "^3.1.0",
     "named-args": "^0.2.0"
   },
+  "platforms": [
+    "android@3.5"
+  ],
   "plugins": [
     "https://github.com/mesmotronic/cordova-fullscreen-plugin.git"
   ]
