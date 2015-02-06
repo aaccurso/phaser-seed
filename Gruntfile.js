@@ -176,7 +176,8 @@ module.exports = function (grunt) {
         command: [
           'rm -rf www',
           'cp -a dist www',
-          'cordova-icon'
+          'cordova-icon',
+          'cordova-splash'
         ].join('&&')
       }
     },
