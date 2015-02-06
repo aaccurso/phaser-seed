@@ -37,7 +37,7 @@
     "named-args": "^0.2.0"
   },
   "platforms": [
-    "android@3.5"
+    "android@3.6.3"
   ],
   "plugins": [
     "https://github.com/mesmotronic/cordova-fullscreen-plugin.git"
