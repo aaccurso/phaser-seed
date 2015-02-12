@@ -1,3 +1,4 @@
+// Configuration specific for PRODUCTION
 {
   "DEBUG": false,
   "DEV": false
