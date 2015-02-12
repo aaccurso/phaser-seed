@@ -22,9 +22,8 @@ Boot.prototype = {
     this.state.start('preload');
   },
   _initGlobalReferences: function() {
-    this.game.global = {
-      CONFIG: require('../config.json')
-    };
+    this.game.CONFIG = require('../config.json');
+    this.game.GAME_CONFIG = require('../game.config.json');
   },
   _initScaleAndOrientation: function() {
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;

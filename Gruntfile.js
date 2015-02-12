@@ -23,7 +23,7 @@ module.exports = function (grunt) {
       scripts: {
         files: [
           '!game/main.js',
-          'game/**/*.js',
+          'game/**/*',
           'templates/*.tpl',
           'config.json',
           'css/**/*.css'
