@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.graion.phaser-seed" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Seed</name>
+    <name>PhaserSeed</name>
     <description>
       A sample Phaser Cordova application seed.
     </description>
@@ -10,5 +10,6 @@
   <content src="index.html"/>
   <access origin="*"/>
   <preference name="orientation" value="landscape"/>
+  <preference name="SplashScreen" value="screen" />
   <preference name="Fullscreen" value="true"/>
 </widget>

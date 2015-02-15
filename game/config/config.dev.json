@@ -1,4 +1,6 @@
+// Configuration specific for DEVELOPMENT
 {
   "DEBUG": true,
-  "DEV": true
+  "DEV": true,
+  // "INITIAL_STATE": "initialState" // State starting after preload
 }

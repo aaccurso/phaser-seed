@@ -15,7 +15,7 @@ Preload.prototype = {
     this.load.image('yeoman', 'assets/yeoman-logo.png');
   },
   onLoadComplete: function() {
-    this.state.start('play');
+    this.game.stateTransition.to(this.game.CONFIG.INITIAL_STATE || 'play');
   }
 };
 

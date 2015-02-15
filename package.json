@@ -1,5 +1,5 @@
 {
-  "name": "seed",
+  "name": "phaser-seed",
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
@@ -33,9 +33,12 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
-    "lodash": "^2.4.1",
+    "lodash": "^3.1.0",
     "named-args": "^0.2.0"
   },
+  "platforms": [
+    "android@3.6.3"
+  ],
   "plugins": [
     "https://github.com/mesmotronic/cordova-fullscreen-plugin.git"
   ]
