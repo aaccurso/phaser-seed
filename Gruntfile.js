@@ -296,15 +296,8 @@ module.exports = function (grunt) {
     // arch is x86 (Intel based tablets) or arm (non-Intel)
     grunt.task.run(['shell:xwalkInstall' + (arch || 'arm'), 'notify_hooks']);
   });
-  grunt.registerTask('cordovaPrepare', function(environment) {
+  grunt.registerTask('cordovaPlatformsPlugins', function() {
     var pkg = grunt.file.readJSON('package.json');
-
-    grunt.task.run([
-      'clean:dist',
-      'copy:' + (environment || 'prod'),
-      'build:dist',
-      'shell:cordovaPrepare'
-    ]);
     if (!pkg.platforms) {
       return grunt.log.error('Platforms not found.');
     }
@@ -316,5 +309,18 @@ module.exports = function (grunt) {
       grunt.log.writeln('Installing plugin ' + plugin);
       shell.exec('cordova plugin add ' + plugin);
     });
+  });
+  grunt.registerTask('cordovaPrepare', function(environment) {
+    var tasks = [
+      'clean:dist',
+      'copy:' + (environment || 'prod'),
+      'build:dist',
+      'shell:cordovaPrepare',
+      'cordovaPlatformsPlugins'
+    ];
+    if (grunt.option('splashicons')) {
+      tasks.push('shell:cordovaSplashIcons');
+    }
+    grunt.task.run(tasks);
   });
 };
