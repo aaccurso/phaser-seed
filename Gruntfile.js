@@ -140,6 +140,7 @@ module.exports = function (grunt) {
         // dest: '.cache/game.js'
       }
     },
+    // DISABLED
     uglify: {
       dist: {
         // files: {
@@ -156,13 +157,23 @@ module.exports = function (grunt) {
       options: {
         stderr: false
       },
-      buildAndroid: {
-        command: './build_android.sh <%= manifest.package %> <%= manifest.name %> <%= manifest.version %>'
+      xwalkBuild: {
+        command: [
+          'python $CROSSWALK_HOME/make_apk.py',
+          '--manifest=dist/manifest.json',
+          '--package=<%= manifest.package %>',
+          '--name=<%= manifest.name %>',
+          '--target-dir=build',
+          '--mode=' + grunt.option('mode', 'embedded'),
+          grunt.option('enable-remote-debugging') ? '--enable-remote-debugging' : '',
+          grunt.option('compressor') ? '--compressor=' + grunt.option('compressor', '') : '',
+          grunt.option('verbose') ? '--verbose' : ''
+        ].join(' ')
       },
-      installAndroidx86: {
+      xwalkInstallx86: {
         command: 'adb install -r build/*_x86.apk'
       },
-      installAndroidarm: {
+      xwalkInstallarm: {
         command: 'adb install -r build/*_arm.apk'
       },
       restartAdb: {
@@ -172,10 +183,14 @@ module.exports = function (grunt) {
           'adb devices'
         ].join('&&')
       },
-      prepareCordova: {
+      cordovaPrepare: {
         command: [
           'rm -rf www',
-          'cp -a dist www',
+          'cp -a dist www'
+        ].join('&&')
+      },
+      cordovaSplashIcons: {
+        command: [
           'cordova-icon',
           'cordova-splash'
         ].join('&&')
@@ -231,6 +246,22 @@ module.exports = function (grunt) {
 
   // Register Grunt Tasks
   grunt.registerTask('default', 'serve');
+  grunt.registerTask('buildBootstrapper', function() {
+    var stateFiles = grunt.file.expand('game/states/*.js'),
+        gameStates = [],
+        statePattern = new RegExp(/(\w+).js$/),
+        bootstrapper = grunt.file.read('templates/_main.js.tpl');
+
+    stateFiles.forEach(function(file) {
+      var state = file.match(statePattern)[1];
+      if (!!state) {
+        gameStates.push({shortName: state, stateName: _.capitalize(state) + 'State'});
+      }
+    });
+    config.gameStates = gameStates;
+    bootstrapper = grunt.template.process(bootstrapper, {data: config});
+    grunt.file.write('game/main.js', bootstrapper);
+  });
   grunt.registerTask('build', function(dest) {
     grunt.task.run([
       'buildBootstrapper',
@@ -251,44 +282,28 @@ module.exports = function (grunt) {
       'watch'
     ]);
   });
-  grunt.registerTask('buildAndroid', function(environment) {
+  grunt.registerTask('xwalkBuild', function(environment) {
     grunt.task.run([
       'clean:dist',
       'copy:' + (environment || 'prod'),
       'build:dist',
-      'shell:buildAndroid',
+      'shell:xwalkBuild',
       'notify_hooks'
     ]);
   });
   grunt.registerTask('restartAdb', ['shell:restartAdb']);
-  grunt.registerTask('installAndroid', function(arch) {
+  grunt.registerTask('xwalkInstall', function(arch) {
     // arch is x86 (Intel based tablets) or arm (non-Intel)
-    grunt.task.run(['shell:installAndroid' + (arch || 'arm'), 'notify_hooks']);
+    grunt.task.run(['shell:xwalkInstall' + (arch || 'arm'), 'notify_hooks']);
   });
-  grunt.registerTask('buildBootstrapper', function() {
-    var stateFiles = grunt.file.expand('game/states/*.js'),
-        gameStates = [],
-        statePattern = new RegExp(/(\w+).js$/),
-        bootstrapper = grunt.file.read('templates/_main.js.tpl');
-
-    stateFiles.forEach(function(file) {
-      var state = file.match(statePattern)[1];
-      if (!!state) {
-        gameStates.push({shortName: state, stateName: _.capitalize(state) + 'State'});
-      }
-    });
-    config.gameStates = gameStates;
-    bootstrapper = grunt.template.process(bootstrapper, {data: config});
-    grunt.file.write('game/main.js', bootstrapper);
-  });
-  grunt.registerTask('cordovaSetup', function(environment) {
+  grunt.registerTask('cordovaPrepare', function(environment) {
     var pkg = grunt.file.readJSON('package.json');
 
     grunt.task.run([
       'clean:dist',
       'copy:' + (environment || 'prod'),
       'build:dist',
-      'shell:prepareCordova'
+      'shell:cordovaPrepare'
     ]);
     if (!pkg.platforms) {
       return grunt.log.error('Platforms not found.');
