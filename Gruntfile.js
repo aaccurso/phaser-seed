@@ -166,7 +166,7 @@ module.exports = function (grunt) {
           '--target-dir=build',
           '--mode=' + grunt.option('mode', 'embedded'),
           grunt.option('enable-remote-debugging') ? '--enable-remote-debugging' : '',
-          grunt.option('compressor') ? '--compressor=' + grunt.option('compressor', '') : '',
+          grunt.option('compressor') ? '--compressor' : '',
           grunt.option('verbose') ? '--verbose' : '',
           // Options for signing the apk for google play
           grunt.option('keystore-path') ? '--keystore-path=' + grunt.option('keystore-path') : '',
