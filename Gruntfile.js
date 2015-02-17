@@ -166,13 +166,13 @@ module.exports = function (grunt) {
           '--target-dir=build',
           '--mode=' + grunt.option('mode', 'embedded'),
           grunt.option('enable-remote-debugging') ? '--enable-remote-debugging' : '',
-          grunt.option('compressor') ? '--compressor' : '',
           grunt.option('verbose') ? '--verbose' : '',
           // Options for signing the apk for google play
           grunt.option('keystore-path') ? '--keystore-path=' + grunt.option('keystore-path') : '',
           grunt.option('keystore-alias') ? '--keystore-alias=' + grunt.option('keystore-alias') : '',
           grunt.option('keystore-passcode') ? '--keystore-passcode=' + grunt.option('keystore-passcode') : '',
-          grunt.option('keystore-alias-passcode') ? '--keystore-alias-passcode=' + grunt.option('keystore-alias-passcode') : ''
+          grunt.option('keystore-alias-passcode') ? '--keystore-alias-passcode=' + grunt.option('keystore-alias-passcode') : '',
+          grunt.option('compressor') ? '--compressor' : ''
         ].join(' ')
       },
       xwalkInstallx86: {
