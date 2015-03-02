@@ -96,7 +96,7 @@ module.exports = function (grunt) {
                 dependencies: [
                   'cordova.js',
                   'phaser.js',
-                  'phaser-state-transition-plugin.min.js',
+                  'phaser-state-transition-plugin.js',
                   'game.js'
                 ]
               }
@@ -305,6 +305,9 @@ module.exports = function (grunt) {
     var pkg = grunt.file.readJSON('package.json');
     if (!pkg.platforms) {
       return grunt.log.error('Platforms not found.');
+    }
+    if (grunt.option('preserve-platforms')) {
+      return grunt.log.writeln('Preserves platforms and plugins');
     }
     _.forEach(pkg.platforms, function (platform) {
       grunt.log.writeln('Installing platform ' + platform);
