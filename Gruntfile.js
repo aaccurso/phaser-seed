@@ -54,7 +54,7 @@ module.exports = function (grunt) {
     },
     open: {
       server: {
-        path: 'http://localhost:9000'
+        path: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>'
       }
     },
     copy: {
