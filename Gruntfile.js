@@ -54,7 +54,7 @@ module.exports = function (grunt) {
     },
     open: {
       server: {
-        path: 'http://localhost:9000'
+        path: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>'
       }
     },
     copy: {
@@ -96,7 +96,7 @@ module.exports = function (grunt) {
                 dependencies: [
                   'cordova.js',
                   'phaser.js',
-                  'phaser-state-transition-plugin.min.js',
+                  'phaser-state-transition-plugin.js',
                   'game.js'
                 ]
               }
@@ -166,8 +166,13 @@ module.exports = function (grunt) {
           '--target-dir=build',
           '--mode=' + grunt.option('mode', 'embedded'),
           grunt.option('enable-remote-debugging') ? '--enable-remote-debugging' : '',
-          grunt.option('compressor') ? '--compressor=' + grunt.option('compressor', '') : '',
-          grunt.option('verbose') ? '--verbose' : ''
+          grunt.option('verbose') ? '--verbose' : '',
+          // Options for signing the apk for google play
+          grunt.option('keystore-path') ? '--keystore-path=' + grunt.option('keystore-path') : '',
+          grunt.option('keystore-alias') ? '--keystore-alias=' + grunt.option('keystore-alias') : '',
+          grunt.option('keystore-passcode') ? '--keystore-passcode=' + grunt.option('keystore-passcode') : '',
+          grunt.option('keystore-alias-passcode') ? '--keystore-alias-passcode=' + grunt.option('keystore-alias-passcode') : '',
+          grunt.option('compressor') ? '--compressor' : ''
         ].join(' ')
       },
       xwalkInstallx86: {
@@ -300,6 +305,9 @@ module.exports = function (grunt) {
     var pkg = grunt.file.readJSON('package.json');
     if (!pkg.platforms) {
       return grunt.log.error('Platforms not found.');
+    }
+    if (grunt.option('preserve-platforms')) {
+      return grunt.log.writeln('Preserves platforms and plugins');
     }
     _.forEach(pkg.platforms, function (platform) {
       grunt.log.writeln('Installing platform ' + platform);

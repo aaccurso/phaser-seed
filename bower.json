@@ -3,6 +3,6 @@
   "version": "0.0.1",
   "dependencies": {
     "phaser-official": "~2.2.1",
-    "phaser-state-transition-plugin": "~0.1.2"
+    "phaser-state-transition-plugin": "~0.1.5"
   }
 }

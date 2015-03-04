@@ -5,6 +5,7 @@
 <!--[if gt IE 8]><!--> <html> <!--<![endif]-->
 <head>
   <title>Seed</title>
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"/>
   <link href="css/styles.css" rel="stylesheet" type="text/css">
 </head>
 <body>
