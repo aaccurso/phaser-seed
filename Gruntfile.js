@@ -117,7 +117,7 @@ module.exports = function (grunt) {
                   'cordova.js',
                   'phaser.js',
                   'phaser-state-transition-plugin.min.js',
-                  'game.js'
+                  'game.min.js'
                 ]
               }
             });
@@ -136,16 +136,16 @@ module.exports = function (grunt) {
       },
       dist: {
         src: ['game/main.js'],
-        dest: 'dist/game.js'
-        // dest: '.cache/game.js'
+        // dest: 'dist/game.js'
+        dest: '.cache/game.js'
       }
     },
-    // DISABLED
     uglify: {
       dist: {
-        // files: {
-        //   'dist/game.min.js': ['.cache/game.js']
-        // }
+        // comment below to disable
+        files: {
+          'dist/game.min.js': ['.cache/game.js']
+        }
       },
       serve: {}
     },
@@ -272,6 +272,7 @@ module.exports = function (grunt) {
       'buildBootstrapper',
       'browserify:' + (dest || 'dist'),
       'uglify:' + (dest || 'dist'),
+      'copy:prod',
       'copy:' + (dest || 'dist'),
       'notify_hooks'
     ]);
