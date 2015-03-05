@@ -267,12 +267,12 @@ module.exports = function (grunt) {
     bootstrapper = grunt.template.process(bootstrapper, {data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
-  grunt.registerTask('build', function(dest) {
+  grunt.registerTask('build', function(dest, environment) {
     grunt.task.run([
       'buildBootstrapper',
       'browserify:' + (dest || 'dist'),
       'uglify:' + (dest || 'dist'),
-      'copy:prod',
+      'copy:' + (environment || 'prod'),
       'copy:' + (dest || 'dist'),
       'notify_hooks'
     ]);
@@ -282,7 +282,7 @@ module.exports = function (grunt) {
       'githooks',
       'clean:serve',
       'copy:' + (environment || 'dev'),
-      'build:serve',
+      'build:serve:' + (environment || 'dev'),
       'connect:livereload',
       'open',
       'watch'
