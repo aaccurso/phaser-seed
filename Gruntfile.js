@@ -271,9 +271,9 @@ module.exports = function (grunt) {
   grunt.registerTask('build', function(dest, environment) {
     grunt.task.run([
       'buildBootstrapper',
-      'browserify:' + (dest || 'dist'),
       'copy:' + (environment || 'prod'),
       'copy:' + (dest || 'dist'),
+      'browserify:' + (dest || 'dist'),
       'uglify:' + (environment || 'prod'),
       'notify_hooks'
     ]);
