@@ -292,8 +292,7 @@ module.exports = function (grunt) {
   grunt.registerTask('xwalkBuild', function(environment) {
     grunt.task.run([
       'clean:dist',
-      'copy:' + (environment || 'prod'),
-      'build:dist',
+      'build:dist:' + (environment || 'prod'),
       'shell:xwalkBuild',
       'notify_hooks'
     ]);
@@ -323,8 +322,7 @@ module.exports = function (grunt) {
   grunt.registerTask('cordovaPrepare', function(environment) {
     var tasks = [
       'clean:dist',
-      'copy:' + (environment || 'prod'),
-      'build:dist',
+      'build:dist:' + (environment || 'prod'),
       'shell:cordovaPrepare',
       'cordovaPlatformsPlugins'
     ];
