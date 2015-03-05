@@ -141,13 +141,14 @@ module.exports = function (grunt) {
       }
     },
     uglify: {
-      dist: {
+      prod: {
         // comment below to disable
         files: {
-          'dist/game.min.js': ['.cache/game.js']
+          'dist/game.min.js': ['.cache/game.js'],
+          'serve/game.min.js': ['.cache/game.js']
         }
       },
-      serve: {}
+      dev: {}
     },
     clean: {
       serve: ['serve'],
@@ -271,9 +272,9 @@ module.exports = function (grunt) {
     grunt.task.run([
       'buildBootstrapper',
       'browserify:' + (dest || 'dist'),
-      'uglify:' + (dest || 'dist'),
       'copy:' + (environment || 'prod'),
       'copy:' + (dest || 'dist'),
+      'uglify:' + (environment || 'prod'),
       'notify_hooks'
     ]);
   });
