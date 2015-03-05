@@ -32,7 +32,7 @@ module.exports = function (grunt) {
           spawn: false,
           livereload: LIVERELOAD_PORT
         },
-        tasks: ['build:serve']
+        tasks: ['build:serve:dev']
       }
     },
     connect: {
