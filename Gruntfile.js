@@ -81,9 +81,9 @@ module.exports = function (grunt) {
             'manifest.json'
           ], dest: 'dist/' },
           { expand: true, flatten: true, src: [
-            'game/plugins/*{.js,.map}',
-            'bower_components/*/build/*{.js,.map}',
-            'bower_components/*/dist/*{.js,.map}',
+            'game/plugins/*{.min.js,.map}',
+            'bower_components/*/build/*{.min.js,.map}',
+            'bower_components/*/dist/*{.min.js,.map}',
             'game/index.html'
           ], dest: 'dist/' }
         ]
@@ -115,7 +115,7 @@ module.exports = function (grunt) {
               data: {
                 dependencies: [
                   'cordova.js',
-                  'phaser.js',
+                  'phaser.min.js',
                   'phaser-state-transition-plugin.min.js',
                   'game.min.js'
                 ]
