@@ -1,7 +1,5 @@
 'use strict';
 
-require('named-args');
-
 function Boot() {}
 
 Boot.prototype = {
