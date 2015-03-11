@@ -9,6 +9,8 @@
     </author>
   <content src="index.html"/>
   <access origin="*"/>
+  <preference name="android-minSdkVersion" value="16"/>
+  <preference name="android-targetSdkVersion" value="19"/>
   <preference name="orientation" value="landscape"/>
   <preference name="SplashScreen" value="screen" />
   <preference name="Fullscreen" value="true"/>
