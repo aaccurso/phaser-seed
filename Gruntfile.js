@@ -32,7 +32,7 @@ module.exports = function (grunt) {
           spawn: false,
           livereload: LIVERELOAD_PORT
         },
-        tasks: ['build:serve']
+        tasks: ['build:serve:dev']
       }
     },
     connect: {
@@ -81,9 +81,9 @@ module.exports = function (grunt) {
             'manifest.json'
           ], dest: 'dist/' },
           { expand: true, flatten: true, src: [
-            'game/plugins/*{.js,.map}',
-            'bower_components/*/build/*{.js,.map}',
-            'bower_components/*/dist/*{.js,.map}',
+            'game/plugins/*{.min.js,.map}',
+            'bower_components/*/build/*{.min.js,.map}',
+            'bower_components/*/dist/*{.min.js,.map}',
             'game/index.html'
           ], dest: 'dist/' }
         ]
@@ -115,9 +115,9 @@ module.exports = function (grunt) {
               data: {
                 dependencies: [
                   'cordova.js',
-                  'phaser.js',
+                  'phaser.min.js',
                   'phaser-state-transition-plugin.min.js',
-                  'game.js'
+                  'game.min.js'
                 ]
               }
             });
@@ -136,18 +136,19 @@ module.exports = function (grunt) {
       },
       dist: {
         src: ['game/main.js'],
-        dest: 'dist/game.js'
-        // dest: '.cache/game.js'
+        // dest: 'dist/game.js'
+        dest: '.cache/game.js'
       }
     },
-    // DISABLED
     uglify: {
-      dist: {
-        // files: {
-        //   'dist/game.min.js': ['.cache/game.js']
-        // }
+      prod: {
+        // comment below to disable
+        files: {
+          'dist/game.min.js': ['.cache/game.js'],
+          'serve/game.min.js': ['.cache/game.js']
+        }
       },
-      serve: {}
+      dev: {}
     },
     clean: {
       serve: ['serve'],
@@ -267,12 +268,13 @@ module.exports = function (grunt) {
     bootstrapper = grunt.template.process(bootstrapper, {data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
-  grunt.registerTask('build', function(dest) {
+  grunt.registerTask('build', function(dest, environment) {
     grunt.task.run([
+      'copy:' + (environment || 'prod'),
+      'copy:' + (dest || 'dist'),
       'buildBootstrapper',
       'browserify:' + (dest || 'dist'),
-      'uglify:' + (dest || 'dist'),
-      'copy:' + (dest || 'dist'),
+      'uglify:' + (environment || 'prod'),
       'notify_hooks'
     ]);
   });
@@ -281,7 +283,7 @@ module.exports = function (grunt) {
       'githooks',
       'clean:serve',
       'copy:' + (environment || 'dev'),
-      'build:serve',
+      'build:serve:' + (environment || 'dev'),
       'connect:livereload',
       'open',
       'watch'
@@ -290,8 +292,7 @@ module.exports = function (grunt) {
   grunt.registerTask('xwalkBuild', function(environment) {
     grunt.task.run([
       'clean:dist',
-      'copy:' + (environment || 'prod'),
-      'build:dist',
+      'build:dist:' + (environment || 'prod'),
       'shell:xwalkBuild',
       'notify_hooks'
     ]);
@@ -321,8 +322,7 @@ module.exports = function (grunt) {
   grunt.registerTask('cordovaPrepare', function(environment) {
     var tasks = [
       'clean:dist',
-      'copy:' + (environment || 'prod'),
-      'build:dist',
+      'build:dist:' + (environment || 'prod'),
       'shell:cordovaPrepare',
       'cordovaPlatformsPlugins'
     ];
